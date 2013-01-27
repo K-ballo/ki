@@ -1,0 +1,31 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 2012
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "empty", "empty\empty.vcxproj", "{C53F3CCB-03EB-4079-8311-21F8E08A7406}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "compiler", "compiler\compiler.vcxproj", "{09303364-6BBB-4CEA-8134-567AF022FF87}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug with Precedence and Associativity in Grammar|Win32 = Debug with Precedence and Associativity in Grammar|Win32
+		Debug|Win32 = Debug|Win32
+		Release|Win32 = Release|Win32
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{C53F3CCB-03EB-4079-8311-21F8E08A7406}.Debug with Precedence and Associativity in Grammar|Win32.ActiveCfg = Debug with Precedence and Associativity in Grammar|Win32
+		{C53F3CCB-03EB-4079-8311-21F8E08A7406}.Debug with Precedence and Associativity in Grammar|Win32.Build.0 = Debug with Precedence and Associativity in Grammar|Win32
+		{C53F3CCB-03EB-4079-8311-21F8E08A7406}.Debug|Win32.ActiveCfg = Debug|Win32
+		{C53F3CCB-03EB-4079-8311-21F8E08A7406}.Debug|Win32.Build.0 = Debug|Win32
+		{C53F3CCB-03EB-4079-8311-21F8E08A7406}.Release|Win32.ActiveCfg = Release|Win32
+		{C53F3CCB-03EB-4079-8311-21F8E08A7406}.Release|Win32.Build.0 = Release|Win32
+		{09303364-6BBB-4CEA-8134-567AF022FF87}.Debug with Precedence and Associativity in Grammar|Win32.ActiveCfg = Debug with Precedence and Associativity in Grammar|Win32
+		{09303364-6BBB-4CEA-8134-567AF022FF87}.Debug with Precedence and Associativity in Grammar|Win32.Build.0 = Debug with Precedence and Associativity in Grammar|Win32
+		{09303364-6BBB-4CEA-8134-567AF022FF87}.Debug|Win32.ActiveCfg = Debug|Win32
+		{09303364-6BBB-4CEA-8134-567AF022FF87}.Debug|Win32.Build.0 = Debug|Win32
+		{09303364-6BBB-4CEA-8134-567AF022FF87}.Release|Win32.ActiveCfg = Release|Win32
+		{09303364-6BBB-4CEA-8134-567AF022FF87}.Release|Win32.Build.0 = Release|Win32
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal

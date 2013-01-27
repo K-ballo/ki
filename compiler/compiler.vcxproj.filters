@@ -1,0 +1,46 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Source Files">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="ki">
+      <UniqueIdentifier>{1fff349a-4b7d-4156-91ea-5488527bbabb}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="main.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="ki\grammar.cpp">
+      <Filter>ki</Filter>
+    </ClCompile>
+    <ClCompile Include="ki\skipper.cpp">
+      <Filter>ki</Filter>
+    </ClCompile>
+    <ClCompile Include="ki\grammar_declaration.cpp">
+      <Filter>ki</Filter>
+    </ClCompile>
+    <ClCompile Include="ki\grammar_expression.cpp">
+      <Filter>ki</Filter>
+    </ClCompile>
+    <ClCompile Include="ki\grammar_lexical.cpp">
+      <Filter>ki</Filter>
+    </ClCompile>
+    <ClCompile Include="ki\grammar_statement.cpp">
+      <Filter>ki</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="ki\grammar.hpp">
+      <Filter>ki</Filter>
+    </ClInclude>
+    <ClInclude Include="ki\skipper.hpp">
+      <Filter>ki</Filter>
+    </ClInclude>
+    <ClInclude Include="ki\ast.hpp">
+      <Filter>ki</Filter>
+    </ClInclude>
+  </ItemGroup>
+</Project>
