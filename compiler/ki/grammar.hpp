@@ -113,8 +113,8 @@ namespace ki {
         
         qi::rule< iterator, ast::expression(), skipper > primary_expression;
 #       else
-        qi::as< ast::intermediate_unary_expression > as_unary_operation;
-        qi::as< ast::intermediate_binary_expression > as_binary_operation;
+        qi::as< ast::intermediate_unary_expression > as_intermediate_unary_expression;
+        qi::as< ast::intermediate_binary_expression > as_intermediate_binary_expression;
         qi::as< ast::intermediate_argument_list > as_intermediate_argument_list;
 
         qi::rule< iterator, ast::intermediate_expression(), skipper > binary_expression;
