@@ -322,7 +322,7 @@ namespace ki {
         BOOST_SPIRIT_DEBUG_NODES((expression));
 
         binary_expression =
-            as_binary_operation[
+            as_intermediate_binary_expression[
                 unary_expression
              >> *(
                     ( pre_binary_operator > unary_expression )
@@ -367,7 +367,7 @@ namespace ki {
         
         unary_expression =
             postfix_expression
-          | as_unary_operation[ pre_unary_operator > unary_expression ]
+          | as_intermediate_unary_expression[ pre_unary_operator > unary_expression ]
             ;
         BOOST_SPIRIT_DEBUG_NODES((unary_expression));
         pre_unary_operator.add
@@ -380,11 +380,11 @@ namespace ki {
             ( "~", ast::operator_::bitwise_not )
             ( "*", ast::operator_::dereference )
             ( "&", ast::operator_::address_of )
-            ( "sizeof ", ast::operator_::size_of )
+            ( "sizeof", ast::operator_::size_of )
             ;
 
         postfix_expression =
-            as_binary_operation[
+            as_intermediate_binary_expression[
                 primary_expression
              >> *(
                     ( post_unary_operator > qi::attr( boost::none ) )
@@ -593,7 +593,6 @@ namespace ki {
         ast::expression operator()( ast::intermediate_argument_list const& argument_list ) const
         {
             BOOST_ASSERT(( false ));
-
             return ast::expression();
         }
     };
