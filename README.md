@@ -1,7 +1,7 @@
 `Ki`
 ==============
 
-`Ki` is an experimental programming language (attempt) based in _C++_. Is
+`Ki` is an experimental programming language (attempt) based on _C++_. Its
 written using [_Boost.Spirit_][boost-spirit] and [_LLVM_][llvm].
 
 [boost-spirit]: http://www.boost.org/doc/libs/release/libs/spirit/ "Boost.Spirit"
