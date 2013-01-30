@@ -342,12 +342,14 @@ namespace ki { namespace ast {
     struct class_declaration;
     struct variable_declaration;
     struct function_declaration;
+    struct namespace_declaration;
 
     typedef
         boost::variant<
             boost::recursive_wrapper< class_declaration >
           , boost::recursive_wrapper< variable_declaration >
           , boost::recursive_wrapper< function_declaration >
+          , boost::recursive_wrapper< namespace_declaration >
         >
         declaration;
 
@@ -456,6 +458,18 @@ namespace ki { namespace ast {
     
     struct intermediate_argument_list : std::vector< expression >
     {};
+
+    struct namespace_declaration
+    {
+        identifier name;
+        compound_statement body;
+    };
+    inline std::ostream& operator <<( std::ostream& left, namespace_declaration const& right )
+    {
+        return
+            left << "namespace " << right.name
+         << '{' << right.body << '}';
+    }
 
     struct variable_declaration
     {
@@ -622,6 +636,12 @@ BOOST_FUSION_ADAPT_STRUCT(
     ki::ast::intermediate_binary_expression
   , (ki::ast::intermediate_expression, operand)
     (std::vector< ki::ast::intermediate_unary_expression >, operations)
+)
+
+BOOST_FUSION_ADAPT_STRUCT(
+    ki::ast::namespace_declaration
+  , (ki::ast::identifier, name)
+    (ki::ast::compound_statement, body)
 )
 
 BOOST_FUSION_ADAPT_STRUCT(
