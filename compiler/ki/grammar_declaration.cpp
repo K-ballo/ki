@@ -51,7 +51,7 @@ namespace ki {
         BOOST_SPIRIT_DEBUG_NODES((function_declaration));
         
         template_declaration =
-            ( '<' > -( template_parameter_declaration % ',' ) > '>' )
+            -( '<' > -( template_parameter_declaration % ',' ) > '>' )
           > -( "requires" > ( '<' > -( template_parameter_requirement % ',' ) > '>' ) )
             ;
         BOOST_SPIRIT_DEBUG_NODES((template_declaration));
