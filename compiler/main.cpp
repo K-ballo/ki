@@ -134,12 +134,12 @@ namespace ki {
 int main( int argc, char* argv[] )
 {
     std::string const input =
-"\
+        "namespace test {\
 function main() -> int\
 {\
   int one = two = three + four + five * not six * seven( 01, 02 )[03] + eight;\
 }\
-";
+}";
 //"return one = ++two[0]->anda.half <= three + four + five++()--[0]++ * not six * ++seven( 01, 02 )[03 ? true : false](04)[05] + eight;"
 
     char const* first = &input.front();
