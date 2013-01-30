@@ -540,7 +540,7 @@ namespace ki { namespace ast {
     inline std::ostream& operator <<( std::ostream& left, function_declaration const& right )
     {
         return
-            left << right.name << '<' << right.template_parameters << '>' << '(' << right.parameters << ')' << ':' << right.qualifiers << ':' << " -> " << right.return_types << '\n'
+            left << "function " << right.name << right.template_parameters << '(' << right.parameters << ')' << ':' << right.qualifiers << ':' << " -> " << right.return_types << '\n'
          << '{' << right.body << '}';
     }
 
@@ -555,7 +555,7 @@ namespace ki { namespace ast {
     inline std::ostream& operator <<( std::ostream& left, class_declaration const& right )
     {
         return
-            left << "class " << right.name << '\n'
+            left << "class " << right.name << right.template_parameters << '\n'
          << '{' << right.members << '}';
     }
 
