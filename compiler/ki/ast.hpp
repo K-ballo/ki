@@ -338,18 +338,18 @@ namespace ki { namespace ast {
           , boost::recursive_wrapper< intermediate_argument_list >
         >
         intermediate_expression;
-
+    
+    struct namespace_declaration;
     struct class_declaration;
     struct variable_declaration;
     struct function_declaration;
-    struct namespace_declaration;
 
     typedef
         boost::variant<
-            boost::recursive_wrapper< class_declaration >
+            boost::recursive_wrapper< namespace_declaration >
+          , boost::recursive_wrapper< class_declaration >
           , boost::recursive_wrapper< variable_declaration >
           , boost::recursive_wrapper< function_declaration >
-          , boost::recursive_wrapper< namespace_declaration >
         >
         declaration;
 

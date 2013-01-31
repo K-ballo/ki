@@ -138,11 +138,11 @@ namespace ki {
         qi::rule< iterator, ast::declaration(), skipper > declaration_statement;
         
         void build_declaration_rules();
-        qi::rule< iterator, ast::declaration(), skipper > declaration;    
+        qi::rule< iterator, ast::declaration(), skipper > declaration;
+        qi::rule< iterator, ast::namespace_declaration(), skipper > namespace_declaration;
         qi::rule< iterator, ast::class_declaration(), skipper > class_declaration;        
         qi::rule< iterator, ast::variable_declaration(), skipper > variable_declaration;
         qi::rule< iterator, ast::function_declaration(), skipper > function_declaration;
-        qi::rule< iterator, ast::namespace_declaration(), skipper > namespace_declaration;
         
         qi::rule< iterator, ast::template_declaration(), skipper > template_declaration;
         qi::rule< iterator, ast::template_parameter_declaration(), skipper > template_parameter_declaration;

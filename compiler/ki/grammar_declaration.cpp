@@ -24,11 +24,17 @@ namespace ki {
     void grammar::build_declaration_rules()
     {
         declaration =
-            class_declaration
+            namespace_declaration
+          | class_declaration
           | variable_declaration | function_declaration
-          | namespace_declaration
             ;
         BOOST_SPIRIT_DEBUG_NODES((declaration));
+
+        namespace_declaration =
+            qi::omit[ qi::lexeme[ "namespace" > qi::space ] ] > identifier
+         >> compound_statement
+            ;
+        BOOST_SPIRIT_DEBUG_NODES((namespace_declaration));
         
         class_declaration =
             qi::omit[ qi::lexeme[ "class" > qi::space ] ] > identifier
@@ -51,11 +57,6 @@ namespace ki {
          >> compound_statement
             ;
         BOOST_SPIRIT_DEBUG_NODES((function_declaration));
-
-        namespace_declaration =
-            qi::omit[ qi::lexeme[ "namespace" > qi::space ] ] > identifier
-         >> compound_statement
-            ;
         
         template_declaration =
             -( '<' > -( template_parameter_declaration % ',' ) > '>' )
