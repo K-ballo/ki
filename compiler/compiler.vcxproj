@@ -114,6 +114,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="ki\declaration_map.cpp" />
     <ClCompile Include="ki\grammar_declaration.cpp" />
     <ClCompile Include="ki\grammar_expression.cpp" />
     <ClCompile Include="ki\grammar.cpp" />
@@ -124,6 +125,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="ki\ast.hpp" />
+    <ClInclude Include="ki\declaration_map.hpp" />
     <ClInclude Include="ki\grammar.hpp" />
     <ClInclude Include="ki\skipper.hpp" />
   </ItemGroup>

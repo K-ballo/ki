@@ -31,6 +31,9 @@
     <ClCompile Include="ki\grammar_statement.cpp">
       <Filter>ki</Filter>
     </ClCompile>
+    <ClCompile Include="ki\declaration_map.cpp">
+      <Filter>ki</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="ki\grammar.hpp">
@@ -40,6 +43,9 @@
       <Filter>ki</Filter>
     </ClInclude>
     <ClInclude Include="ki\ast.hpp">
+      <Filter>ki</Filter>
+    </ClInclude>
+    <ClInclude Include="ki\declaration_map.hpp">
       <Filter>ki</Filter>
     </ClInclude>
   </ItemGroup>
