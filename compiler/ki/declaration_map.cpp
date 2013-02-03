@@ -25,19 +25,19 @@ namespace ki {
           , _declarations( declarations )
         {}
 
-        void operator ()( ast::compound_statement const& compound_statement ) const
+        void operator ()( ast::compound_statement& compound_statement ) const
         {
             std::for_each(
                 compound_statement.begin(), compound_statement.end()
               , boost::apply_visitor( *this )
             );
         }
-        void operator ()( ast::declaration const& declaration ) const
+        void operator ()( ast::declaration& declaration ) const
         {
             boost::apply_visitor( *this, declaration );
         }
         
-        void operator ()( ast::namespace_declaration const& declaration ) const
+        void operator ()( ast::namespace_declaration& declaration ) const
         {
             std::string const qualified_name = _scope_name + "::" + declaration.name.name;
             
@@ -46,11 +46,11 @@ namespace ki {
               , boost::apply_visitor( process_declarations( _declarations, qualified_name ) )
             );
         }
-        void operator ()( ast::class_declaration const& declaration ) const
+        void operator ()( ast::class_declaration& declaration ) const
         {
             std::string const qualified_name = _scope_name + "::" + declaration.name.name;
             
-            _declarations->types.emplace( qualified_name, declaration );
+            _declarations->types.emplace( qualified_name, &declaration );
             std::for_each(
                 declaration.template_parameters.parameters.begin(), declaration.template_parameters.parameters.end()
               , process_declarations( _declarations, qualified_name )
@@ -60,17 +60,17 @@ namespace ki {
               , boost::apply_visitor( process_declarations( _declarations, qualified_name ) )
             );
         }
-        void operator ()( ast::variable_declaration const& declaration ) const
+        void operator ()( ast::variable_declaration& declaration ) const
         {
             std::string const qualified_name = _scope_name + "::" + declaration.name.name;
 
-            _declarations->variables.emplace( qualified_name, declaration );
+            _declarations->variables.emplace( qualified_name, &declaration );
         }
-        void operator ()( ast::function_declaration const& declaration ) const
+        void operator ()( ast::function_declaration& declaration ) const
         {
             std::string const qualified_name = _scope_name + "::" + declaration.name.name;
             
-            _declarations->functions.emplace( qualified_name, declaration );
+            _declarations->functions.emplace( qualified_name, &declaration );
             std::for_each(
                 declaration.template_parameters.parameters.begin(), declaration.template_parameters.parameters.end()
               , process_declarations( _declarations, qualified_name )
@@ -85,30 +85,29 @@ namespace ki {
             );
         }
 
-        void operator ()( ast::template_parameter_declaration const& declaration ) const
+        void operator ()( ast::template_parameter_declaration& declaration ) const
         {
             std::string const qualified_name = _scope_name + "::" + declaration.name.name;
             
-            _declarations->types.emplace( qualified_name, declaration );
+            _declarations->types.emplace( qualified_name, &declaration );
         }
-        void operator ()( ast::parameter_declaration const& declaration ) const
+        void operator ()( ast::parameter_declaration& declaration ) const
         {
             std::string const qualified_name = _scope_name + "::" + declaration.name.name;
 
-            _declarations->variables.emplace( qualified_name, declaration );
+            _declarations->variables.emplace( qualified_name, &declaration );
         }
 
         template< typename Statement >
-        void operator ()( Statement const& /*statement*/ ) const
+        void operator ()( Statement& /*statement*/ ) const
         {}
 
     private:
-        std::string _scope_name;
-
         declaration_map* _declarations;
+        std::string _scope_name;
     };
 
-    void declaration_map::insert( ast::statement const& statement )
+    void declaration_map::insert( ast::statement& statement )
     {
         boost::apply_visitor( process_declarations( this ), statement );
     }

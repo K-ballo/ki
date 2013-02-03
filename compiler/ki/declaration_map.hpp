@@ -23,21 +23,21 @@ namespace ki {
     
     typedef
         boost::variant<
-            ast::class_declaration
-          , ast::template_parameter_declaration
+            ast::class_declaration*
+          , ast::template_parameter_declaration*
         >
         type_declaration;
 
     typedef
         boost::variant<
-            ast::variable_declaration
-          , ast::parameter_declaration
+            ast::variable_declaration*
+          , ast::parameter_declaration*
         >
         variable_declaration;
 
     typedef
         boost::variant<
-            ast::function_declaration
+            ast::function_declaration*
         >
         function_declaration;
 
@@ -47,7 +47,7 @@ namespace ki {
         std::multimap< std::string, variable_declaration > variables;
         std::multimap< std::string, function_declaration > functions;
 
-        void insert( ast::statement const& statement );
+        void insert( ast::statement& statement );
 
         template< typename InputIterator >
         void insert( InputIterator first, InputIterator last )
