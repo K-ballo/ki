@@ -61,55 +61,55 @@ namespace ki {
 
         qi::rule< iterator, ast::expression(), qi::locals< ast::expression >, skipper > assignment_expression;
         qi::rule< iterator, ast::expression( ast::expression ), skipper > assignment_expression_tail;
-        qi::symbols< char, ast::operator_ > assignment_operator;
+        qi::rule< iterator, ast::operator_(), skipper > assignment_operator;
         
         qi::rule< iterator, ast::expression(), qi::locals< ast::expression >, skipper > logical_or_expression;
         qi::rule< iterator, ast::expression( ast::expression ), qi::locals< ast::expression >, skipper > logical_or_expression_tail;
-        qi::symbols< char, ast::operator_ > logical_or_operator;
+        qi::rule< iterator, ast::operator_(), skipper > logical_or_operator;
         
         qi::rule< iterator, ast::expression(), qi::locals< ast::expression >, skipper > logical_and_expression;
         qi::rule< iterator, ast::expression( ast::expression ), qi::locals< ast::expression >, skipper > logical_and_expression_tail;
-        qi::symbols< char, ast::operator_ > logical_and_operator;
+        qi::rule< iterator, ast::operator_(), skipper > logical_and_operator;
         
         qi::rule< iterator, ast::expression(), qi::locals< ast::expression >, skipper > bitwise_or_expression;
         qi::rule< iterator, ast::expression( ast::expression ), qi::locals< ast::expression >, skipper > bitwise_or_expression_tail;
-        qi::symbols< char, ast::operator_ > bitwise_or_operator;
+        qi::rule< iterator, ast::operator_(), skipper > bitwise_or_operator;
         
         qi::rule< iterator, ast::expression(), qi::locals< ast::expression >, skipper > bitwise_xor_expression;
         qi::rule< iterator, ast::expression( ast::expression ), qi::locals< ast::expression >, skipper > bitwise_xor_expression_tail;
-        qi::symbols< char, ast::operator_ > bitwise_xor_operator;
+        qi::rule< iterator, ast::operator_(), skipper > bitwise_xor_operator;
 
         qi::rule< iterator, ast::expression(), qi::locals< ast::expression >, skipper > bitwise_and_expression;
         qi::rule< iterator, ast::expression( ast::expression ), qi::locals< ast::expression >, skipper > bitwise_and_expression_tail;
-        qi::symbols< char, ast::operator_ > bitwise_and_operator;
+        qi::rule< iterator, ast::operator_(), skipper > bitwise_and_operator;
         
         qi::rule< iterator, ast::expression(), qi::locals< ast::expression >, skipper > equality_expression;
         qi::rule< iterator, ast::expression( ast::expression ), qi::locals< ast::expression >, skipper > equality_expression_tail;
-        qi::symbols< char, ast::operator_ > equality_operator;
+        qi::rule< iterator, ast::operator_(), skipper > equality_operator;
         
         qi::rule< iterator, ast::expression(), qi::locals< ast::expression >, skipper > relational_expression;
         qi::rule< iterator, ast::expression( ast::expression ), qi::locals< ast::expression >, skipper > relational_expression_tail;
-        qi::symbols< char, ast::operator_ > relational_operator;
+        qi::rule< iterator, ast::operator_(), skipper > relational_operator;
         
         qi::rule< iterator, ast::expression(), qi::locals< ast::expression >, skipper > shift_expression;
         qi::rule< iterator, ast::expression( ast::expression ), qi::locals< ast::expression >, skipper > shift_expression_tail;
-        qi::symbols< char, ast::operator_ > shift_operator;
+        qi::rule< iterator, ast::operator_(), skipper > shift_operator;
         
         qi::rule< iterator, ast::expression(), qi::locals< ast::expression >, skipper > additive_expression;
         qi::rule< iterator, ast::expression( ast::expression ), qi::locals< ast::expression >, skipper > additive_expression_tail;
-        qi::symbols< char, ast::operator_ > additive_operator;
+        qi::rule< iterator, ast::operator_(), skipper > additive_operator;
         
         qi::rule< iterator, ast::expression(), qi::locals< ast::expression >, skipper > multiplicative_expression;
         qi::rule< iterator, ast::expression( ast::expression ), qi::locals< ast::expression >, skipper > multiplicative_expression_tail;
-        qi::symbols< char, ast::operator_ > multiplicative_operator;
+        qi::rule< iterator, ast::operator_(), skipper > multiplicative_operator;
 
         qi::rule< iterator, ast::expression(), skipper > unary_expression;
-        qi::symbols< char, ast::operator_ > unary_operator;
+        qi::rule< iterator, ast::operator_(), skipper > unary_operator;
         
         qi::rule< iterator, ast::expression(), qi::locals< ast::expression >, skipper > postfix_expression;
         qi::rule< iterator, ast::expression( ast::expression ), qi::locals< ast::expression >, skipper > postfix_expression_tail;
-        qi::symbols< char, ast::operator_ > post_unary_operator;
-        qi::symbols< char, ast::operator_ > post_binary_operator;
+        qi::rule< iterator, ast::operator_(), skipper > post_unary_operator;
+        qi::rule< iterator, ast::operator_(), skipper > post_binary_operator;
         
         qi::rule< iterator, ast::expression(), skipper > primary_expression;
 #       else
@@ -118,14 +118,14 @@ namespace ki {
         qi::as< ast::intermediate_argument_list > as_intermediate_argument_list;
 
         qi::rule< iterator, ast::intermediate_expression(), skipper > binary_expression;
-        qi::symbols< char, ast::operator_ > pre_binary_operator;
+        qi::rule< iterator, ast::operator_(), skipper > pre_binary_operator;
 
         qi::rule< iterator, ast::intermediate_expression(), skipper > unary_expression;
-        qi::symbols< char, ast::operator_ > pre_unary_operator;
+        qi::rule< iterator, ast::operator_(), skipper > pre_unary_operator;
         
         qi::rule< iterator, ast::intermediate_expression(), skipper > postfix_expression;
-        qi::symbols< char, ast::operator_ > post_unary_operator;
-        qi::symbols< char, ast::operator_ > post_binary_operator;
+        qi::rule< iterator, ast::operator_(), skipper > post_unary_operator;
+        qi::rule< iterator, ast::operator_(), skipper > post_binary_operator;
         
         qi::rule< iterator, ast::intermediate_expression(), skipper > primary_expression;
 #       endif /*KI_PRECEDENCE_AND_ASSOCIATIVITY_IN_GRAMMAR*/
