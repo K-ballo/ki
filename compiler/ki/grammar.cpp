@@ -57,7 +57,7 @@ namespace ki {
         lexer::iterator_type iter = lexer.begin( first, last );
         lexer::iterator_type end = lexer.end();
 
-        return qi::parse( iter, end, grammar, statements ) && iter == end;
+        return qi::parse( iter, end, grammar, statements );
     }
 
 } // namespace ki

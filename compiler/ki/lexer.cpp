@@ -110,12 +110,12 @@ namespace ki {
         self.add( identifier = "[a-zA-Z_][a-zA-Z_0-9]*" );
     }
 
-    std::size_t lexer::add_literal( char const* literal )
+    lexer::id_type lexer::add_literal( char const* literal )
     {
         static char const chars_to_escape[] = ".^$*+-?()[]{}|\\/";
 
         std::string const key = literal;
-        std::size_t const token_id = get_next_id();
+        id_type const token_id = get_next_id();
 
         std::string token_def;
         for( std::size_t start = 0; start < key.size(); )

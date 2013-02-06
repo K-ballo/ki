@@ -43,7 +43,7 @@ namespace ki {
                 logical_or_expression[ qi::_a = qi::_1 ]
             ] > assignment_expression_tail( qi::_a )
             ;
-        BOOST_SPIRIT_DEBUG_NODE(assignment_expression);
+        BOOST_SPIRIT_DEBUG_NODES((assignment_expression));
         assignment_expression_tail =
             as_binary_expression[
                 qi::attr( qi::_r1 ) >> assignment_operator >> assignment_expression
@@ -51,27 +51,28 @@ namespace ki {
                 qi::attr( qi::_r1 ) >> lexer( "?" ) >> expression >> lexer( ":" ) >> expression
             ] | qi::attr( qi::_r1 )
             ;
-        BOOST_SPIRIT_DEBUG_NODE(assignment_expression_tail);
-        assignment_operator =
-            lexer( "=" ) > qi::attr( ast::operator_::assign )
-          | lexer( "+=" ) > qi::attr( ast::operator_::add_assign )
-          | lexer( "-=" ) > qi::attr( ast::operator_::substract_assign )
-          | lexer( "*=" ) > qi::attr( ast::operator_::multiply_assign )
-          | lexer( "/=" ) > qi::attr( ast::operator_::divide_assign )
-          | lexer( "%=" ) > qi::attr( ast::operator_::modulus_assign )
-          | lexer( "<<=" ) > qi::attr( ast::operator_::left_shift_assign )
-          | lexer( ">>=" ) > qi::attr( ast::operator_::right_shift_assign )
-          | lexer( "|=" ) > qi::attr( ast::operator_::bitwise_or_assign )
-          | lexer( "^=" ) > qi::attr( ast::operator_::bitwise_xor_assign )
-          | lexer( "&=" ) > qi::attr( ast::operator_::bitwise_and_assign )
+        BOOST_SPIRIT_DEBUG_NODES((assignment_expression_tail));
+        assignment_operator
+            .add( lexer.id( "=" ), ast::operator_::assign )
+            .add( lexer.id( "+=" ), ast::operator_::add_assign )
+            .add( lexer.id( "-=" ), ast::operator_::substract_assign )
+            .add( lexer.id( "*=" ), ast::operator_::multiply_assign )
+            .add( lexer.id( "/=" ), ast::operator_::divide_assign )
+            .add( lexer.id( "%=" ), ast::operator_::modulus_assign )
+            .add( lexer.id( "<<=" ), ast::operator_::left_shift_assign )
+            .add( lexer.id( ">>=" ), ast::operator_::right_shift_assign )
+            .add( lexer.id( "|=" ), ast::operator_::bitwise_or_assign )
+            .add( lexer.id( "^=" ), ast::operator_::bitwise_xor_assign )
+            .add( lexer.id( "&=" ), ast::operator_::bitwise_and_assign )
             ;
+        BOOST_SPIRIT_DEBUG_NODES((assignment_operator));
         
         logical_or_expression =
             qi::omit[
                 logical_and_expression[ qi::_a = qi::_1 ]
             ] > logical_or_expression_tail( qi::_a )
             ;
-        BOOST_SPIRIT_DEBUG_NODE(logical_or_expression);
+        BOOST_SPIRIT_DEBUG_NODES((logical_or_expression));
         logical_or_expression_tail =
             qi::omit[
                 as_binary_expression[
@@ -79,18 +80,19 @@ namespace ki {
                 ][ qi::_a = qi::_1 ]
             ] > logical_or_expression_tail( qi::_a ) | qi::attr( qi::_r1 )
             ;
-        BOOST_SPIRIT_DEBUG_NODE(logical_or_expression_tail);
-        logical_or_operator = 
-            lexer( "||" ) > qi::attr( ast::operator_::or_ )
-          | lexer( "or" ) > qi::attr( ast::operator_::or_ )
+        BOOST_SPIRIT_DEBUG_NODES((logical_or_expression_tail));
+        logical_or_operator
+            .add( lexer.id( "||" ), ast::operator_::or_ )
+            .add( lexer.id( "or" ), ast::operator_::or_ )
             ;
+        BOOST_SPIRIT_DEBUG_NODES((logical_or_operator));
         
         logical_and_expression =
             qi::omit[
                 bitwise_or_expression[ qi::_a = qi::_1 ]
             ] > logical_and_expression_tail( qi::_a )
             ;
-        BOOST_SPIRIT_DEBUG_NODE(logical_and_expression);
+        BOOST_SPIRIT_DEBUG_NODES((logical_and_expression));
         logical_and_expression_tail =
             qi::omit[
                 as_binary_expression[
@@ -98,18 +100,19 @@ namespace ki {
                 ][ qi::_a = qi::_1 ]
             ] > logical_and_expression_tail( qi::_a ) | qi::attr( qi::_r1 )
             ;
-        BOOST_SPIRIT_DEBUG_NODE(logical_and_expression_tail);
-        logical_and_operator =
-            lexer( "&&" ) > qi::attr( ast::operator_::and_ )
-          | lexer( "and" ) > qi::attr( ast::operator_::and_ )
+        BOOST_SPIRIT_DEBUG_NODES((logical_and_expression_tail));
+        logical_and_operator
+            .add( lexer.id( "&&" ), ast::operator_::and_ )
+            .add( lexer.id( "and" ), ast::operator_::and_ )
             ;
+        BOOST_SPIRIT_DEBUG_NODES((logical_and_operator));
         
         bitwise_or_expression =
             qi::omit[
                 bitwise_xor_expression[ qi::_a = qi::_1 ]
             ] > bitwise_or_expression_tail( qi::_a )
             ;
-        BOOST_SPIRIT_DEBUG_NODE(bitwise_or_expression);
+        BOOST_SPIRIT_DEBUG_NODES((bitwise_or_expression));
         bitwise_or_expression_tail =
             qi::omit[
                 as_binary_expression[
@@ -117,17 +120,18 @@ namespace ki {
                 ][ qi::_a = qi::_1 ]
             ] > bitwise_or_expression_tail( qi::_a ) | qi::attr( qi::_r1 )
             ;
-        BOOST_SPIRIT_DEBUG_NODE(bitwise_or_expression_tail);
-        bitwise_or_operator = 
-            lexer( "|" ) > qi::attr( ast::operator_::bitwise_or )
+        BOOST_SPIRIT_DEBUG_NODES((bitwise_or_expression_tail));
+        bitwise_or_operator
+            .add( lexer.id( "|" ), ast::operator_::bitwise_or )
             ;
+        BOOST_SPIRIT_DEBUG_NODES((bitwise_or_operator));
         
         bitwise_xor_expression =
             qi::omit[
                 bitwise_and_expression[ qi::_a = qi::_1 ]
             ] > bitwise_xor_expression_tail( qi::_a )
             ;
-        BOOST_SPIRIT_DEBUG_NODE(bitwise_xor_expression);
+        BOOST_SPIRIT_DEBUG_NODES((bitwise_xor_expression));
         bitwise_xor_expression_tail =
             qi::omit[
                 as_binary_expression[
@@ -135,17 +139,18 @@ namespace ki {
                 ][ qi::_a = qi::_1 ]
             ] > bitwise_xor_expression_tail( qi::_a ) | qi::attr( qi::_r1 )
             ;
-        BOOST_SPIRIT_DEBUG_NODE(bitwise_xor_expression_tail);
-        bitwise_xor_operator = 
-            lexer( "^" ) > qi::attr( ast::operator_::bitwise_xor )
+        BOOST_SPIRIT_DEBUG_NODES((bitwise_xor_expression_tail));
+        bitwise_xor_operator
+            .add( lexer.id( "^" ), ast::operator_::bitwise_xor )
             ;
+        BOOST_SPIRIT_DEBUG_NODES((bitwise_xor_operator));
         
         bitwise_and_expression =
             qi::omit[
                 equality_expression[ qi::_a = qi::_1 ]
             ] > bitwise_and_expression_tail( qi::_a )
             ;
-        BOOST_SPIRIT_DEBUG_NODE(bitwise_and_expression);
+        BOOST_SPIRIT_DEBUG_NODES((bitwise_and_expression));
         bitwise_and_expression_tail =
             qi::omit[
                 as_binary_expression[
@@ -153,17 +158,18 @@ namespace ki {
                 ][ qi::_a = qi::_1 ]
             ] > bitwise_and_expression_tail( qi::_a ) | qi::attr( qi::_r1 )
             ;
-        BOOST_SPIRIT_DEBUG_NODE(bitwise_and_expression_tail);
-        bitwise_and_operator =
-            lexer( "&" ) > qi::attr( ast::operator_::bitwise_and )
+        BOOST_SPIRIT_DEBUG_NODES((bitwise_and_expression_tail));
+        bitwise_and_operator
+            .add( lexer.id( "&" ), ast::operator_::bitwise_and )
             ;
+        BOOST_SPIRIT_DEBUG_NODES((bitwise_and_operator));
         
         equality_expression =
             qi::omit[
                 relational_expression[ qi::_a = qi::_1 ]
             ] > equality_expression_tail( qi::_a )
             ;
-        BOOST_SPIRIT_DEBUG_NODE(equality_expression);
+        BOOST_SPIRIT_DEBUG_NODES((equality_expression));
         equality_expression_tail =
             qi::omit[
                 as_binary_expression[
@@ -171,18 +177,19 @@ namespace ki {
                 ][ qi::_a = qi::_1 ]
             ] > equality_expression_tail( qi::_a ) | qi::attr( qi::_r1 )
             ;
-        BOOST_SPIRIT_DEBUG_NODE(logical_and_expression_tail);
-        equality_operator =
-            lexer( "==" ) > qi::attr( ast::operator_::equal )
-          | lexer( "!=" ) > qi::attr( ast::operator_::not_equal )
+        BOOST_SPIRIT_DEBUG_NODES((equality_expression_tail));
+        equality_operator
+            .add( lexer.id( "==" ), ast::operator_::equal )
+            .add( lexer.id( "!=" ), ast::operator_::not_equal )
             ;
+        BOOST_SPIRIT_DEBUG_NODES((equality_operator));
         
         relational_expression =
             qi::omit[
                 shift_expression[ qi::_a = qi::_1 ]
             ] > relational_expression_tail( qi::_a )
             ;
-        BOOST_SPIRIT_DEBUG_NODE(relational_expression);
+        BOOST_SPIRIT_DEBUG_NODES((relational_expression));
         relational_expression_tail =
             qi::omit[
                 as_binary_expression[
@@ -190,20 +197,21 @@ namespace ki {
                 ][ qi::_a = qi::_1 ]
             ] > relational_expression_tail( qi::_a ) | qi::attr( qi::_r1 )
             ;
-        BOOST_SPIRIT_DEBUG_NODE(relational_expression_tail);
-        relational_operator =
-            lexer( "<" ) > qi::attr( ast::operator_::less )
-          | lexer( "<=" ) > qi::attr( ast::operator_::less_equal )
-          | lexer( ">" ) > qi::attr( ast::operator_::greater )
-          | lexer( ">=" ) > qi::attr( ast::operator_::greater_equal )
+        BOOST_SPIRIT_DEBUG_NODES((relational_expression_tail));
+        relational_operator
+            .add( lexer.id( "<" ), ast::operator_::less )
+            .add( lexer.id( "<=" ), ast::operator_::less_equal )
+            .add( lexer.id( ">" ), ast::operator_::greater )
+            .add( lexer.id( ">=" ), ast::operator_::greater_equal )
             ;
+        BOOST_SPIRIT_DEBUG_NODES((relational_operator));
         
         shift_expression =
             qi::omit[
                 additive_expression[ qi::_a = qi::_1 ]
             ] > shift_expression_tail( qi::_a )
             ;
-        BOOST_SPIRIT_DEBUG_NODE(shift_expression);
+        BOOST_SPIRIT_DEBUG_NODES((shift_expression));
         shift_expression_tail =
             qi::omit[
                 as_binary_expression[
@@ -211,18 +219,19 @@ namespace ki {
                 ][ qi::_a = qi::_1 ]
             ] > shift_expression_tail( qi::_a ) | qi::attr( qi::_r1 )
             ;
-        BOOST_SPIRIT_DEBUG_NODE(shift_expression_tail);
-        shift_operator =
-            lexer( "<<" ) > qi::attr( ast::operator_::left_shift )
-          | lexer( ">>" ) > qi::attr( ast::operator_::right_shift )
+        BOOST_SPIRIT_DEBUG_NODES((shift_expression_tail));
+        shift_operator
+            .add( lexer.id( "<<" ), ast::operator_::left_shift )
+            .add( lexer.id( ">>" ), ast::operator_::right_shift )
             ;
+        BOOST_SPIRIT_DEBUG_NODES((shift_operator));
 
         additive_expression =
             qi::omit[
                 multiplicative_expression[ qi::_a = qi::_1 ]
             ] > additive_expression_tail( qi::_a )
             ;
-        BOOST_SPIRIT_DEBUG_NODE(additive_expression);
+        BOOST_SPIRIT_DEBUG_NODES((additive_expression));
         additive_expression_tail =
             qi::omit[
                 as_binary_expression[
@@ -230,18 +239,19 @@ namespace ki {
                 ][ qi::_a = qi::_1 ]
             ] > additive_expression_tail( qi::_a ) | qi::attr( qi::_r1 )
             ;
-        BOOST_SPIRIT_DEBUG_NODE(additive_expression_tail);
-        additive_operator =
-            lexer( "+" ) > qi::attr( ast::operator_::add )
-          | lexer( "-" ) > qi::attr( ast::operator_::substract )
+        BOOST_SPIRIT_DEBUG_NODES((additive_expression_tail));
+        additive_operator
+            .add( lexer.id( "+" ), ast::operator_::add )
+            .add( lexer.id( "-" ), ast::operator_::substract )
             ;
+        BOOST_SPIRIT_DEBUG_NODES((additive_operator));
         
         multiplicative_expression =
             qi::omit[
                 unary_expression[ qi::_a = qi::_1 ]
             ] > multiplicative_expression_tail( qi::_a )
             ;
-        BOOST_SPIRIT_DEBUG_NODE(multiplicative_expression);
+        BOOST_SPIRIT_DEBUG_NODES((multiplicative_expression));
         multiplicative_expression_tail =
             qi::omit[
                 as_binary_expression[
@@ -249,38 +259,40 @@ namespace ki {
                 ][ qi::_a = qi::_1 ]
             ] > multiplicative_expression_tail( qi::_a ) | qi::attr( qi::_r1 )
             ;
-        BOOST_SPIRIT_DEBUG_NODE(multiplicative_expression_tail);
-        multiplicative_operator =
-            lexer( "*" ) > qi::attr( ast::operator_::multiply )
-          | lexer( "/" ) > qi::attr( ast::operator_::divide )
-          | lexer( "%" ) > qi::attr( ast::operator_::modulus )
+        BOOST_SPIRIT_DEBUG_NODES((multiplicative_expression_tail));
+        multiplicative_operator
+            .add( lexer.id( "*" ), ast::operator_::multiply )
+            .add( lexer.id( "/" ), ast::operator_::divide )
+            .add( lexer.id( "%" ), ast::operator_::modulus )
             ;
+        BOOST_SPIRIT_DEBUG_NODES((multiplicative_operator));
         
         unary_expression =
             as_unary_expression[
                 unary_operator >> unary_expression
             ] | postfix_expression
             ;
-        BOOST_SPIRIT_DEBUG_NODE(unary_expression);
-        unary_operator =
-            lexer( "++" ) > qi::attr( ast::operator_::pre_increment )
-          | lexer( "--" ) > qi::attr( ast::operator_::pre_decrement )
-          | lexer( "+" ) > qi::attr( ast::operator_::positive )
-          | lexer( "-" ) > qi::attr( ast::operator_::negative )
-          | lexer( "!" ) > qi::attr( ast::operator_::not_ )
-          | lexer( "not" ) > qi::attr( ast::operator_::not_ )
-          | lexer( "~" ) > qi::attr( ast::operator_::bitwise_not )
-          | lexer( "*" ) > qi::attr( ast::operator_::dereference )
-          | lexer( "&" ) > qi::attr( ast::operator_::address_of )
-          | lexer( "sizeof" ) > qi::attr( ast::operator_::size_of )
+        BOOST_SPIRIT_DEBUG_NODES((unary_expression));
+        unary_operator
+            .add( lexer.id( "++" ), ast::operator_::pre_increment )
+            .add( lexer.id( "--" ), ast::operator_::pre_decrement )
+            .add( lexer.id( "+" ), ast::operator_::positive )
+            .add( lexer.id( "-" ), ast::operator_::negative )
+            .add( lexer.id( "!" ), ast::operator_::not_ )
+            .add( lexer.id( "not" ), ast::operator_::not_ )
+            .add( lexer.id( "~" ), ast::operator_::bitwise_not )
+            .add( lexer.id( "*" ), ast::operator_::dereference )
+            .add( lexer.id( "&" ), ast::operator_::address_of )
+            .add( lexer.id( "sizeof" ), ast::operator_::size_of )
             ;
+        BOOST_SPIRIT_DEBUG_NODES((unary_operator));
 
         postfix_expression =
             qi::omit[
                 primary_expression[ qi::_a = qi::_1 ]
             ] > postfix_expression_tail( qi::_a )
             ;
-        BOOST_SPIRIT_DEBUG_NODE(postfix_expression);
+        BOOST_SPIRIT_DEBUG_NODES((postfix_expression));
         postfix_expression_tail =
             qi::omit[
                 as_unary_expression[
@@ -298,14 +310,16 @@ namespace ki {
             ] > postfix_expression_tail( qi::_a ) | qi::attr( qi::_r1 )
             ;
         BOOST_SPIRIT_DEBUG_NODES((postfix_expression_tail));
-        post_unary_operator =
-            lexer( "++" ) > qi::attr( ast::operator_::post_increment )
-          | lexer( "--" ) > qi::attr( ast::operator_::post_decrement )
+        post_unary_operator
+            .add( lexer.id( "++" ), ast::operator_::post_increment )
+            .add( lexer.id( "--" ), ast::operator_::post_decrement )
             ;
-        post_binary_operator =
-            lexer( "." ) > qi::attr( ast::operator_::member_access )
-          | lexer( "->" ) > qi::attr( ast::operator_::pointer_access )
+        BOOST_SPIRIT_DEBUG_NODES((post_unary_operator));
+        post_binary_operator
+            .add( lexer.id( "." ), ast::operator_::member_access )
+            .add( lexer.id( "->" ), ast::operator_::pointer_access )
             ;
+        BOOST_SPIRIT_DEBUG_NODES((post_binary_operator));
         
         primary_expression =
             literal
@@ -330,57 +344,59 @@ namespace ki {
             ]
             ;
         BOOST_SPIRIT_DEBUG_NODES((binary_expression));
-        pre_binary_operator =
-            lexer( "=" ) > qi::attr( ast::operator_::assign )
-          | lexer( "+=" ) > qi::attr( ast::operator_::add_assign )
-          | lexer( "-=" ) > qi::attr( ast::operator_::substract_assign )
-          | lexer( "*=" ) > qi::attr( ast::operator_::multiply_assign )
-          | lexer( "/=" ) > qi::attr( ast::operator_::divide_assign )
-          | lexer( "%=" ) > qi::attr( ast::operator_::modulus_assign )
-          | lexer( "<<=" ) > qi::attr( ast::operator_::left_shift_assign )
-          | lexer( ">>=" ) > qi::attr( ast::operator_::right_shift_assign )
-          | lexer( "|=" ) > qi::attr( ast::operator_::bitwise_or_assign )
-          | lexer( "^=" ) > qi::attr( ast::operator_::bitwise_xor_assign )
-          | lexer( "&=" ) > qi::attr( ast::operator_::bitwise_and_assign )
-          | lexer( "||" ) > qi::attr( ast::operator_::or_ )
-          | lexer( "or" ) > qi::attr( ast::operator_::or_ )
-          | lexer( "&&" ) > qi::attr( ast::operator_::and_ )
-          | lexer( "and" ) > qi::attr( ast::operator_::and_ )
-          | lexer( "|" ) > qi::attr( ast::operator_::bitwise_or )
-          | lexer( "^" ) > qi::attr( ast::operator_::bitwise_xor )
-          | lexer( "&" ) > qi::attr( ast::operator_::bitwise_and )
-          | lexer( "==" ) > qi::attr( ast::operator_::equal )
-          | lexer( "!=" ) > qi::attr( ast::operator_::not_equal )
-          | lexer( "<" ) > qi::attr( ast::operator_::less )
-          | lexer( "<=" ) > qi::attr( ast::operator_::less_equal )
-          | lexer( ">" ) > qi::attr( ast::operator_::greater )
-          | lexer( ">=" ) > qi::attr( ast::operator_::greater_equal )
-          | lexer( "<<" ) > qi::attr( ast::operator_::left_shift )
-          | lexer( ">>" ) > qi::attr( ast::operator_::right_shift )
-          | lexer( "+" ) > qi::attr( ast::operator_::add )
-          | lexer( "-" ) > qi::attr( ast::operator_::substract )
-          | lexer( "*" ) > qi::attr( ast::operator_::multiply )
-          | lexer( "/" ) > qi::attr( ast::operator_::divide )
-          | lexer( "%" ) > qi::attr( ast::operator_::modulus )
+        pre_binary_operator
+            .add( lexer.id( "=" ), ast::operator_::assign )
+            .add( lexer.id( "+=" ), ast::operator_::add_assign )
+            .add( lexer.id( "-=" ), ast::operator_::substract_assign )
+            .add( lexer.id( "*=" ), ast::operator_::multiply_assign )
+            .add( lexer.id( "/=" ), ast::operator_::divide_assign )
+            .add( lexer.id( "%=" ), ast::operator_::modulus_assign )
+            .add( lexer.id( "<<=" ), ast::operator_::left_shift_assign )
+            .add( lexer.id( ">>=" ), ast::operator_::right_shift_assign )
+            .add( lexer.id( "|=" ), ast::operator_::bitwise_or_assign )
+            .add( lexer.id( "^=" ), ast::operator_::bitwise_xor_assign )
+            .add( lexer.id( "&=" ), ast::operator_::bitwise_and_assign )
+            .add( lexer.id( "||" ), ast::operator_::or_ )
+            .add( lexer.id( "or" ), ast::operator_::or_ )
+            .add( lexer.id( "&&" ), ast::operator_::and_ )
+            .add( lexer.id( "and" ), ast::operator_::and_ )
+            .add( lexer.id( "|" ), ast::operator_::bitwise_or )
+            .add( lexer.id( "^" ), ast::operator_::bitwise_xor )
+            .add( lexer.id( "&" ), ast::operator_::bitwise_and )
+            .add( lexer.id( "==" ), ast::operator_::equal )
+            .add( lexer.id( "!=" ), ast::operator_::not_equal )
+            .add( lexer.id( "<" ), ast::operator_::less )
+            .add( lexer.id( "<=" ), ast::operator_::less_equal )
+            .add( lexer.id( ">" ), ast::operator_::greater )
+            .add( lexer.id( ">=" ), ast::operator_::greater_equal )
+            .add( lexer.id( "<<" ), ast::operator_::left_shift )
+            .add( lexer.id( ">>" ), ast::operator_::right_shift )
+            .add( lexer.id( "+" ), ast::operator_::add )
+            .add( lexer.id( "-" ), ast::operator_::substract )
+            .add( lexer.id( "*" ), ast::operator_::multiply )
+            .add( lexer.id( "/" ), ast::operator_::divide )
+            .add( lexer.id( "%" ), ast::operator_::modulus )
             ;
+        BOOST_SPIRIT_DEBUG_NODES((pre_binary_operator));
         
         unary_expression =
             postfix_expression
           | as_intermediate_unary_expression[ pre_unary_operator > unary_expression ]
             ;
         BOOST_SPIRIT_DEBUG_NODES((unary_expression));
-        pre_unary_operator = 
-            lexer( "++" ) > qi::attr( ast::operator_::pre_increment )
-          | lexer( "--" ) > qi::attr( ast::operator_::pre_decrement )
-          | lexer( "+" ) > qi::attr( ast::operator_::positive )
-          | lexer( "-" ) > qi::attr( ast::operator_::negative )
-          | lexer( "!" ) > qi::attr( ast::operator_::not_ )
-          | lexer( "not" ) > qi::attr( ast::operator_::not_ )
-          | lexer( "~" ) > qi::attr( ast::operator_::bitwise_not )
-          | lexer( "*" ) > qi::attr( ast::operator_::dereference )
-          | lexer( "&" ) > qi::attr( ast::operator_::address_of )
-          | lexer( "sizeof" ) > qi::attr( ast::operator_::size_of )
+        pre_unary_operator
+            .add( lexer.id( "++" ), ast::operator_::pre_increment )
+            .add( lexer.id( "--" ), ast::operator_::pre_decrement )
+            .add( lexer.id( "+" ), ast::operator_::positive )
+            .add( lexer.id( "-" ), ast::operator_::negative )
+            .add( lexer.id( "!" ), ast::operator_::not_ )
+            .add( lexer.id( "not" ), ast::operator_::not_ )
+            .add( lexer.id( "~" ), ast::operator_::bitwise_not )
+            .add( lexer.id( "*" ), ast::operator_::dereference )
+            .add( lexer.id( "&" ), ast::operator_::address_of )
+            .add( lexer.id( "sizeof" ), ast::operator_::size_of )
             ;
+        BOOST_SPIRIT_DEBUG_NODES((pre_unary_operator));
 
         postfix_expression =
             as_intermediate_binary_expression[
@@ -394,14 +410,16 @@ namespace ki {
             ]
             ;
         BOOST_SPIRIT_DEBUG_NODES((postfix_expression));
-        post_unary_operator =
-            lexer( "++" ) > qi::attr( ast::operator_::post_increment )
-          | lexer( "--" ) > qi::attr( ast::operator_::post_decrement )
+        post_unary_operator
+            .add( lexer.id( "++" ), ast::operator_::post_increment )
+            .add( lexer.id( "--" ), ast::operator_::post_decrement )
             ;
-        post_binary_operator = 
-            lexer( "." ) > qi::attr( ast::operator_::member_access )
-          | lexer( "->" ) > qi::attr( ast::operator_::pointer_access )
+        BOOST_SPIRIT_DEBUG_NODES((post_unary_operator));
+        post_binary_operator
+            .add( lexer.id( "." ), ast::operator_::member_access )
+            .add( lexer.id( "->" ), ast::operator_::pointer_access )
             ;
+        BOOST_SPIRIT_DEBUG_NODES((post_binary_operator));
         
         primary_expression =
             literal

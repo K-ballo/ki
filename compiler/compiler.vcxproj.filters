@@ -48,5 +48,8 @@
     <ClInclude Include="ki\lexer.hpp">
       <Filter>ki</Filter>
     </ClInclude>
+    <ClInclude Include="ki\lexer_switch.hpp">
+      <Filter>ki</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>
