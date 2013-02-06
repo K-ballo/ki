@@ -17,7 +17,6 @@ namespace ki {
 
     lexer::lexer()
     {
-
         add_literal( "and" );
         add_literal( "auto" );
         add_literal( "axiom" );
@@ -113,17 +112,31 @@ namespace ki {
 
     std::size_t lexer::add_literal( char const* literal )
     {
-        static std::string const chars_to_escape = ".^$*+-?()[]{}|\\/";
+        static char const chars_to_escape[] = ".^$*+-?()[]{}|\\/";
 
         std::string const key = literal;
         std::size_t const token_id = get_next_id();
 
         std::string token_def;
-        for( std::size_t i = 0, count = key.size(); i < count; ++i )
+        for( std::size_t start = 0; start < key.size(); )
         {
-            if( chars_to_escape.find( key[ i ] ) != std::string::npos )
+            std::size_t const next =
+                key.find_first_of( chars_to_escape, start );
+
+            std::size_t end;
+            if( next != std::string::npos )
+            {
                 token_def.push_back( '\\' );
-            token_def.push_back( key[ i ] );
+                end = next + 1;
+            } else {
+                end = key.size();
+            }
+
+            token_def.insert(
+                token_def.end()
+              , key.begin() + start, key.begin() + end
+            );
+            start = end;
         }
         self.add( token_def, token_id );
         tokens[ key ] = token_id;
