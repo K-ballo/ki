@@ -16,9 +16,6 @@
     <ClCompile Include="ki\grammar.cpp">
       <Filter>ki</Filter>
     </ClCompile>
-    <ClCompile Include="ki\skipper.cpp">
-      <Filter>ki</Filter>
-    </ClCompile>
     <ClCompile Include="ki\grammar_declaration.cpp">
       <Filter>ki</Filter>
     </ClCompile>
@@ -34,18 +31,21 @@
     <ClCompile Include="ki\declaration_map.cpp">
       <Filter>ki</Filter>
     </ClCompile>
+    <ClCompile Include="ki\lexer.cpp">
+      <Filter>ki</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="ki\grammar.hpp">
-      <Filter>ki</Filter>
-    </ClInclude>
-    <ClInclude Include="ki\skipper.hpp">
       <Filter>ki</Filter>
     </ClInclude>
     <ClInclude Include="ki\ast.hpp">
       <Filter>ki</Filter>
     </ClInclude>
     <ClInclude Include="ki\declaration_map.hpp">
+      <Filter>ki</Filter>
+    </ClInclude>
+    <ClInclude Include="ki\lexer.hpp">
       <Filter>ki</Filter>
     </ClInclude>
   </ItemGroup>

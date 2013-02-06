@@ -11,46 +11,42 @@
 
 #include "grammar.hpp"
 
-#include <boost/spirit/include/qi_char_.hpp>
-#include <boost/spirit/include/qi_char_class.hpp>
-#include <boost/spirit/include/qi_lexeme.hpp>
 #include <boost/spirit/include/qi_nonterminal.hpp>
-#include <boost/spirit/include/qi_omit.hpp>
 #include <boost/spirit/include/qi_operator.hpp>
-#include <boost/spirit/include/qi_string.hpp>
 
 namespace ki {
     
-    void grammar::build_declaration_rules()
+    void grammar::build_declaration_rules( lexer const& lexer )
     {
         declaration =
             namespace_declaration
           | class_declaration
-          | variable_declaration | function_declaration
+          | variable_declaration
+          | function_declaration
             ;
         BOOST_SPIRIT_DEBUG_NODES((declaration));
 
         namespace_declaration =
-            qi::omit[ qi::lexeme[ "namespace" > qi::space ] ] > identifier
-         >> compound_statement
+            lexer( "namespace" ) > identifier
+          > compound_statement
             ;
         BOOST_SPIRIT_DEBUG_NODES((namespace_declaration));
         
         class_declaration =
-            qi::omit[ qi::lexeme[ "class" > qi::space ] ] > identifier
-         > template_declaration
-         > '{' > *( variable_declaration | function_declaration ) > '}'
+            lexer( "class" ) > identifier
+          > template_declaration
+          > lexer( "{" ) > *( variable_declaration | function_declaration ) > lexer( "}" )
             ;
         BOOST_SPIRIT_DEBUG_NODES((class_declaration));
 
         variable_declaration =
             type_name >> identifier >> *qualifier
-         >> -( '=' > expression ) > ';'
+         >> -( lexer( "=" ) > expression ) > lexer( ";" )
             ;
         BOOST_SPIRIT_DEBUG_NODES((variable_declaration));
         
         function_declaration =
-            qi::omit[ qi::lexeme[ "function" > qi::space ] ] > identifier
+            lexer( "function" ) > identifier
          >> template_declaration
          >> parameter_declaration_list >> *qualifier
          >> return_type_list
@@ -59,23 +55,23 @@ namespace ki {
         BOOST_SPIRIT_DEBUG_NODES((function_declaration));
         
         template_declaration =
-            -( '<' > -( template_parameter_declaration % ',' ) > '>' )
-          > -( "requires" > ( '<' > -( template_parameter_requirement % ',' ) > '>' ) )
+            -( lexer( "<" ) > -( template_parameter_declaration % lexer( "," ) ) > lexer( ">" ) )
+          > -( lexer( "requires" ) > ( lexer( "<" ) > -( template_parameter_requirement % lexer( "," ) ) > lexer( ">" ) ) )
             ;
         BOOST_SPIRIT_DEBUG_NODES((template_declaration));
 
         template_parameter_declaration =
-            qi::omit[ qi::lexeme[ "class" > qi::space ] ] > identifier > *qualifier
+            lexer( "class" ) > identifier > *qualifier
             ;
         BOOST_SPIRIT_DEBUG_NODES((template_parameter_declaration));
         
         template_parameter_requirement =
-            qi::omit[ qi::lexeme[ "class" > qi::space ] ] > identifier
+            lexer( "class" ) > identifier
             ;
         BOOST_SPIRIT_DEBUG_NODES((template_parameter_requirement));
         
         parameter_declaration_list =
-            '(' > -( parameter_declaration % ',' ) > ')'
+            lexer( "(" ) > -( parameter_declaration % lexer( "," ) ) > lexer( ")" )
             ;
         BOOST_SPIRIT_DEBUG_NODES((parameter_declaration_list));
         
@@ -85,7 +81,7 @@ namespace ki {
         BOOST_SPIRIT_DEBUG_NODES((parameter_declaration));
         
         return_type_list =
-            "->" > ( ( '(' > ( return_type % ',' ) > ')' ) | return_type )
+            lexer( "->" ) > ( ( lexer( "(" ) > ( return_type % lexer( "," ) ) > lexer( ")" ) ) | return_type )
             ;
         BOOST_SPIRIT_DEBUG_NODES((return_type_list));
         

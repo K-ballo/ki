@@ -14,13 +14,16 @@
 #include <boost/spirit/home/phoenix.hpp>
 #include <boost/spirit/home/qi.hpp>
 
+#include <boost/spirit/include/qi_nonterminal.hpp>
+#include <boost/spirit/include/qi_operator.hpp>
+
 #include <iostream>
 
 namespace ki {
 
     namespace phoenix = boost::phoenix;
 
-    grammar::grammar()
+    grammar::grammar( lexer const& lexer )
       : grammar::base_type( start )
     {
         start =
@@ -28,10 +31,10 @@ namespace ki {
             ;
         BOOST_SPIRIT_DEBUG_NODES((start));
         
-        build_lexical_rules();
-        build_expression_rules();
-        build_statement_rules();
-        build_declaration_rules();
+        build_lexical_rules( lexer );
+        build_expression_rules( lexer );
+        build_statement_rules( lexer );
+        build_declaration_rules( lexer );
 
         qi::on_error< qi::fail >
         (
@@ -48,14 +51,13 @@ namespace ki {
     
     bool compile( char const*& first, char const* last, std::vector< ki::ast::statement >& statements )
     {
-        grammar grammar;
-        
-        return 
-            qi::phrase_parse(
-                first, last
-              , grammar, skipper()
-              , statements
-            ) && first == last;
+        lexer lexer;
+        grammar grammar( lexer );
+
+        lexer::iterator_type iter = lexer.begin( first, last );
+        lexer::iterator_type end = lexer.end();
+
+        return qi::parse( iter, end, grammar, statements ) && iter == end;
     }
 
 } // namespace ki

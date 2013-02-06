@@ -11,35 +11,34 @@
 
 #include "grammar.hpp"
 
-#include <boost/spirit/include/qi_char_.hpp>
-#include <boost/spirit/include/qi_char_class.hpp>
-#include <boost/spirit/include/qi_lexeme.hpp>
 #include <boost/spirit/include/qi_nonterminal.hpp>
-#include <boost/spirit/include/qi_omit.hpp>
 #include <boost/spirit/include/qi_operator.hpp>
-#include <boost/spirit/include/qi_string.hpp>
 
 namespace ki {
     
-    void grammar::build_statement_rules()
+    void grammar::build_statement_rules( lexer const& lexer )
     {
         statement =
-            expression_statement | compound_statement | return_statement | declaration_statement | ';'
+            expression_statement
+          | compound_statement
+          | return_statement
+          | declaration_statement
+          | lexer( ";" )
             ;
         BOOST_SPIRIT_DEBUG_NODES((statement));
         
         expression_statement =
-            expression >> ';'
+            expression >> lexer( ";" )
             ;
         BOOST_SPIRIT_DEBUG_NODES((expression_statement));
         
         compound_statement =
-            '{' > *statement > '}'
+            lexer( "{" ) > *statement > lexer( "}" )
             ;
         BOOST_SPIRIT_DEBUG_NODES((compound_statement));
         
         return_statement =
-            qi::omit[ qi::lexeme[ "return" > qi::space ] ] > -expression > ';'
+            lexer( "return" ) > -expression > lexer( ";" )
             ;
         BOOST_SPIRIT_DEBUG_NODES((compound_statement));
 

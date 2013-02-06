@@ -16,12 +16,11 @@
 
 #include <boost/spirit/include/qi_action.hpp>
 #include <boost/spirit/include/qi_attr.hpp>
-#include <boost/spirit/include/qi_char_.hpp>
 #include <boost/spirit/include/qi_domain.hpp>
+#include <boost/spirit/include/qi_lazy.hpp>
 #include <boost/spirit/include/qi_nonterminal.hpp>
 #include <boost/spirit/include/qi_omit.hpp>
 #include <boost/spirit/include/qi_operator.hpp>
-#include <boost/spirit/include/qi_string.hpp>
 
 #include <vector>
 
@@ -31,7 +30,7 @@ namespace ki {
     
     static ast::expression build_expression( ast::intermediate_expression& attr );
 
-    void grammar::build_expression_rules()
+    void grammar::build_expression_rules( lexer const& lexer )
     {
 #       ifdef KI_PRECEDENCE_AND_ASSOCIATIVITY_IN_GRAMMAR
         expression =
@@ -49,22 +48,22 @@ namespace ki {
             as_binary_expression[
                 qi::attr( qi::_r1 ) >> assignment_operator >> assignment_expression
             ] | as_conditional_expression[
-                qi::attr( qi::_r1 ) >> '?' >> expression >> ':' >> expression
+                qi::attr( qi::_r1 ) >> lexer( "?" ) >> expression >> lexer( ":" ) >> expression
             ] | qi::attr( qi::_r1 )
             ;
         BOOST_SPIRIT_DEBUG_NODE(assignment_expression_tail);
         assignment_operator =
-            qi::omit[ "=" ] > qi::attr( ast::operator_::assign )
-          | qi::omit[ "+=" ] > qi::attr( ast::operator_::add_assign )
-          | qi::omit[ "-=" ] > qi::attr( ast::operator_::substract_assign )
-          | qi::omit[ "*=" ] > qi::attr( ast::operator_::multiply_assign )
-          | qi::omit[ "/=" ] > qi::attr( ast::operator_::divide_assign )
-          | qi::omit[ "%=" ] > qi::attr( ast::operator_::modulus_assign )
-          | qi::omit[ "<<=" ] > qi::attr( ast::operator_::left_shift_assign )
-          | qi::omit[ ">>=" ] > qi::attr( ast::operator_::right_shift_assign )
-          | qi::omit[ "|=" ] > qi::attr( ast::operator_::bitwise_or_assign )
-          | qi::omit[ "^=" ] > qi::attr( ast::operator_::bitwise_xor_assign )
-          | qi::omit[ "&=" ] > qi::attr( ast::operator_::bitwise_and_assign )
+            lexer( "=" ) > qi::attr( ast::operator_::assign )
+          | lexer( "+=" ) > qi::attr( ast::operator_::add_assign )
+          | lexer( "-=" ) > qi::attr( ast::operator_::substract_assign )
+          | lexer( "*=" ) > qi::attr( ast::operator_::multiply_assign )
+          | lexer( "/=" ) > qi::attr( ast::operator_::divide_assign )
+          | lexer( "%=" ) > qi::attr( ast::operator_::modulus_assign )
+          | lexer( "<<=" ) > qi::attr( ast::operator_::left_shift_assign )
+          | lexer( ">>=" ) > qi::attr( ast::operator_::right_shift_assign )
+          | lexer( "|=" ) > qi::attr( ast::operator_::bitwise_or_assign )
+          | lexer( "^=" ) > qi::attr( ast::operator_::bitwise_xor_assign )
+          | lexer( "&=" ) > qi::attr( ast::operator_::bitwise_and_assign )
             ;
         
         logical_or_expression =
@@ -82,8 +81,8 @@ namespace ki {
             ;
         BOOST_SPIRIT_DEBUG_NODE(logical_or_expression_tail);
         logical_or_operator = 
-            qi::omit[ "||" ] > qi::attr( ast::operator_::or_ )
-          | qi::omit[ "or" ] > qi::attr( ast::operator_::or_ )
+            lexer( "||" ) > qi::attr( ast::operator_::or_ )
+          | lexer( "or" ) > qi::attr( ast::operator_::or_ )
             ;
         
         logical_and_expression =
@@ -101,8 +100,8 @@ namespace ki {
             ;
         BOOST_SPIRIT_DEBUG_NODE(logical_and_expression_tail);
         logical_and_operator =
-            qi::omit[ "&&" ] > qi::attr( ast::operator_::and_ )
-          | qi::omit[ "and" ] > qi::attr( ast::operator_::and_ )
+            lexer( "&&" ) > qi::attr( ast::operator_::and_ )
+          | lexer( "and" ) > qi::attr( ast::operator_::and_ )
             ;
         
         bitwise_or_expression =
@@ -120,7 +119,7 @@ namespace ki {
             ;
         BOOST_SPIRIT_DEBUG_NODE(bitwise_or_expression_tail);
         bitwise_or_operator = 
-            qi::omit[ "|" ] > qi::attr( ast::operator_::bitwise_or )
+            lexer( "|" ) > qi::attr( ast::operator_::bitwise_or )
             ;
         
         bitwise_xor_expression =
@@ -138,7 +137,7 @@ namespace ki {
             ;
         BOOST_SPIRIT_DEBUG_NODE(bitwise_xor_expression_tail);
         bitwise_xor_operator = 
-            qi::omit[ "^" ] > qi::attr( ast::operator_::bitwise_xor )
+            lexer( "^" ) > qi::attr( ast::operator_::bitwise_xor )
             ;
         
         bitwise_and_expression =
@@ -156,7 +155,7 @@ namespace ki {
             ;
         BOOST_SPIRIT_DEBUG_NODE(bitwise_and_expression_tail);
         bitwise_and_operator =
-            qi::omit[ "&" ] > qi::attr( ast::operator_::bitwise_and )
+            lexer( "&" ) > qi::attr( ast::operator_::bitwise_and )
             ;
         
         equality_expression =
@@ -174,8 +173,8 @@ namespace ki {
             ;
         BOOST_SPIRIT_DEBUG_NODE(logical_and_expression_tail);
         equality_operator =
-            qi::omit[ "==" ] > qi::attr( ast::operator_::equal )
-          | qi::omit[ "!=" ] > qi::attr( ast::operator_::not_equal )
+            lexer( "==" ) > qi::attr( ast::operator_::equal )
+          | lexer( "!=" ) > qi::attr( ast::operator_::not_equal )
             ;
         
         relational_expression =
@@ -193,10 +192,10 @@ namespace ki {
             ;
         BOOST_SPIRIT_DEBUG_NODE(relational_expression_tail);
         relational_operator =
-            qi::omit[ "<" ] > qi::attr( ast::operator_::less )
-          | qi::omit[ "<=" ] > qi::attr( ast::operator_::less_equal )
-          | qi::omit[ ">" ] > qi::attr( ast::operator_::greater )
-          | qi::omit[ ">=" ] > qi::attr( ast::operator_::greater_equal )
+            lexer( "<" ) > qi::attr( ast::operator_::less )
+          | lexer( "<=" ) > qi::attr( ast::operator_::less_equal )
+          | lexer( ">" ) > qi::attr( ast::operator_::greater )
+          | lexer( ">=" ) > qi::attr( ast::operator_::greater_equal )
             ;
         
         shift_expression =
@@ -214,8 +213,8 @@ namespace ki {
             ;
         BOOST_SPIRIT_DEBUG_NODE(shift_expression_tail);
         shift_operator =
-            qi::omit[ "<<" ] > qi::attr( ast::operator_::left_shift )
-          | qi::omit[ ">>" ] > qi::attr( ast::operator_::right_shift )
+            lexer( "<<" ) > qi::attr( ast::operator_::left_shift )
+          | lexer( ">>" ) > qi::attr( ast::operator_::right_shift )
             ;
 
         additive_expression =
@@ -233,8 +232,8 @@ namespace ki {
             ;
         BOOST_SPIRIT_DEBUG_NODE(additive_expression_tail);
         additive_operator =
-            qi::omit[ "+" ] > qi::attr( ast::operator_::add )
-          | qi::omit[ "-" ] > qi::attr( ast::operator_::substract )
+            lexer( "+" ) > qi::attr( ast::operator_::add )
+          | lexer( "-" ) > qi::attr( ast::operator_::substract )
             ;
         
         multiplicative_expression =
@@ -252,9 +251,9 @@ namespace ki {
             ;
         BOOST_SPIRIT_DEBUG_NODE(multiplicative_expression_tail);
         multiplicative_operator =
-            qi::omit[ "*" ] > qi::attr( ast::operator_::multiply )
-          | qi::omit[ "/" ] > qi::attr( ast::operator_::divide )
-          | qi::omit[ "%" ] > qi::attr( ast::operator_::modulus )
+            lexer( "*" ) > qi::attr( ast::operator_::multiply )
+          | lexer( "/" ) > qi::attr( ast::operator_::divide )
+          | lexer( "%" ) > qi::attr( ast::operator_::modulus )
             ;
         
         unary_expression =
@@ -264,16 +263,16 @@ namespace ki {
             ;
         BOOST_SPIRIT_DEBUG_NODE(unary_expression);
         unary_operator =
-            qi::omit[ "++" ] > qi::attr( ast::operator_::pre_increment )
-          | qi::omit[ "--" ] > qi::attr( ast::operator_::pre_decrement )
-          | qi::omit[ "+" ] > qi::attr( ast::operator_::positive )
-          | qi::omit[ "-" ] > qi::attr( ast::operator_::negative )
-          | qi::omit[ "!" ] > qi::attr( ast::operator_::not_ )
-          | qi::omit[ "not" ] > qi::attr( ast::operator_::not_ )
-          | qi::omit[ "~" ] > qi::attr( ast::operator_::bitwise_not )
-          | qi::omit[ "*" ] > qi::attr( ast::operator_::dereference )
-          | qi::omit[ "&" ] > qi::attr( ast::operator_::address_of )
-          | qi::omit[ "sizeof" ] > qi::attr( ast::operator_::size_of )
+            lexer( "++" ) > qi::attr( ast::operator_::pre_increment )
+          | lexer( "--" ) > qi::attr( ast::operator_::pre_decrement )
+          | lexer( "+" ) > qi::attr( ast::operator_::positive )
+          | lexer( "-" ) > qi::attr( ast::operator_::negative )
+          | lexer( "!" ) > qi::attr( ast::operator_::not_ )
+          | lexer( "not" ) > qi::attr( ast::operator_::not_ )
+          | lexer( "~" ) > qi::attr( ast::operator_::bitwise_not )
+          | lexer( "*" ) > qi::attr( ast::operator_::dereference )
+          | lexer( "&" ) > qi::attr( ast::operator_::address_of )
+          | lexer( "sizeof" ) > qi::attr( ast::operator_::size_of )
             ;
 
         postfix_expression =
@@ -288,10 +287,10 @@ namespace ki {
                     post_unary_operator >> qi::attr( qi::_r1 )
                 ][ qi::_a = qi::_1 ]
               | as_function_call_expression[
-                    qi::attr( qi::_r1 ) >> '(' >> -( expression % ',' ) >> ')'
+                    qi::attr( qi::_r1 ) >> lexer( "(" ) >> -( expression % lexer( "," ) ) >> lexer( ")" )
                 ][ qi::_a = qi::_1 ]
               | as_binary_expression[
-                    qi::attr( qi::_r1 ) >> '[' >> qi::attr( ast::operator_::subscript ) >> expression >> ']'
+                    qi::attr( qi::_r1 ) >> lexer( "[" ) >> qi::attr( ast::operator_::subscript ) >> expression >> lexer( "]" )
                 ][ qi::_a = qi::_1 ]
               | as_binary_expression[
                     qi::attr( qi::_r1 ) >> post_binary_operator >> primary_expression
@@ -300,18 +299,18 @@ namespace ki {
             ;
         BOOST_SPIRIT_DEBUG_NODES((postfix_expression_tail));
         post_unary_operator =
-            qi::omit[ "++" ] > qi::attr( ast::operator_::post_increment )
-          | qi::omit[ "--" ] > qi::attr( ast::operator_::post_decrement )
+            lexer( "++" ) > qi::attr( ast::operator_::post_increment )
+          | lexer( "--" ) > qi::attr( ast::operator_::post_decrement )
             ;
         post_binary_operator =
-            qi::omit[ "." ] > qi::attr( ast::operator_::member_access )
-          | qi::omit[ "->" ] > qi::attr( ast::operator_::pointer_access )
+            lexer( "." ) > qi::attr( ast::operator_::member_access )
+          | lexer( "->" ) > qi::attr( ast::operator_::pointer_access )
             ;
         
         primary_expression =
             literal
-          | "self"
-          | ( '(' > expression > ')' )
+          | lexer( "self" )
+          | ( lexer( "(" ) > expression > lexer( ")" ) )
           | identifier
             ;
         BOOST_SPIRIT_DEBUG_NODES((primary_expression));
@@ -326,43 +325,43 @@ namespace ki {
                 unary_expression
              >> *(
                     ( pre_binary_operator > unary_expression )
-                  | ( '?' >> qi::attr( ast::operator_::conditional ) >> as_intermediate_argument_list[ expression >> ':' >> expression ] )
+                  | ( lexer( "?" ) >> qi::attr( ast::operator_::conditional ) >> as_intermediate_argument_list[ expression >> lexer( ":" ) >> expression ] )
                 )
             ]
             ;
         BOOST_SPIRIT_DEBUG_NODES((binary_expression));
         pre_binary_operator =
-            qi::omit[ "=" ] > qi::attr( ast::operator_::assign )
-          | qi::omit[ "+=" ] > qi::attr( ast::operator_::add_assign )
-          | qi::omit[ "-=" ] > qi::attr( ast::operator_::substract_assign )
-          | qi::omit[ "*=" ] > qi::attr( ast::operator_::multiply_assign )
-          | qi::omit[ "/=" ] > qi::attr( ast::operator_::divide_assign )
-          | qi::omit[ "%=" ] > qi::attr( ast::operator_::modulus_assign )
-          | qi::omit[ "<<=" ] > qi::attr( ast::operator_::left_shift_assign )
-          | qi::omit[ ">>=" ] > qi::attr( ast::operator_::right_shift_assign )
-          | qi::omit[ "|=" ] > qi::attr( ast::operator_::bitwise_or_assign )
-          | qi::omit[ "^=" ] > qi::attr( ast::operator_::bitwise_xor_assign )
-          | qi::omit[ "&=" ] > qi::attr( ast::operator_::bitwise_and_assign )
-          | qi::omit[ "||" ] > qi::attr( ast::operator_::or_ )
-          | qi::omit[ "or" ] > qi::attr( ast::operator_::or_ )
-          | qi::omit[ "&&" ] > qi::attr( ast::operator_::and_ )
-          | qi::omit[ "and" ] > qi::attr( ast::operator_::and_ )
-          | qi::omit[ "|" ] > qi::attr( ast::operator_::bitwise_or )
-          | qi::omit[ "^" ] > qi::attr( ast::operator_::bitwise_xor )
-          | qi::omit[ "&" ] > qi::attr( ast::operator_::bitwise_and )
-          | qi::omit[ "==" ] > qi::attr( ast::operator_::equal )
-          | qi::omit[ "!=" ] > qi::attr( ast::operator_::not_equal )
-          | qi::omit[ "<" ] > qi::attr( ast::operator_::less )
-          | qi::omit[ "<=" ] > qi::attr( ast::operator_::less_equal )
-          | qi::omit[ ">" ] > qi::attr( ast::operator_::greater )
-          | qi::omit[ ">=" ] > qi::attr( ast::operator_::greater_equal )
-          | qi::omit[ "<<" ] > qi::attr( ast::operator_::left_shift )
-          | qi::omit[ ">>" ] > qi::attr( ast::operator_::right_shift )
-          | qi::omit[ "+" ] > qi::attr( ast::operator_::add )
-          | qi::omit[ "-" ] > qi::attr( ast::operator_::substract )
-          | qi::omit[ "*" ] > qi::attr( ast::operator_::multiply )
-          | qi::omit[ "/" ] > qi::attr( ast::operator_::divide )
-          | qi::omit[ "%" ] > qi::attr( ast::operator_::modulus )
+            lexer( "=" ) > qi::attr( ast::operator_::assign )
+          | lexer( "+=" ) > qi::attr( ast::operator_::add_assign )
+          | lexer( "-=" ) > qi::attr( ast::operator_::substract_assign )
+          | lexer( "*=" ) > qi::attr( ast::operator_::multiply_assign )
+          | lexer( "/=" ) > qi::attr( ast::operator_::divide_assign )
+          | lexer( "%=" ) > qi::attr( ast::operator_::modulus_assign )
+          | lexer( "<<=" ) > qi::attr( ast::operator_::left_shift_assign )
+          | lexer( ">>=" ) > qi::attr( ast::operator_::right_shift_assign )
+          | lexer( "|=" ) > qi::attr( ast::operator_::bitwise_or_assign )
+          | lexer( "^=" ) > qi::attr( ast::operator_::bitwise_xor_assign )
+          | lexer( "&=" ) > qi::attr( ast::operator_::bitwise_and_assign )
+          | lexer( "||" ) > qi::attr( ast::operator_::or_ )
+          | lexer( "or" ) > qi::attr( ast::operator_::or_ )
+          | lexer( "&&" ) > qi::attr( ast::operator_::and_ )
+          | lexer( "and" ) > qi::attr( ast::operator_::and_ )
+          | lexer( "|" ) > qi::attr( ast::operator_::bitwise_or )
+          | lexer( "^" ) > qi::attr( ast::operator_::bitwise_xor )
+          | lexer( "&" ) > qi::attr( ast::operator_::bitwise_and )
+          | lexer( "==" ) > qi::attr( ast::operator_::equal )
+          | lexer( "!=" ) > qi::attr( ast::operator_::not_equal )
+          | lexer( "<" ) > qi::attr( ast::operator_::less )
+          | lexer( "<=" ) > qi::attr( ast::operator_::less_equal )
+          | lexer( ">" ) > qi::attr( ast::operator_::greater )
+          | lexer( ">=" ) > qi::attr( ast::operator_::greater_equal )
+          | lexer( "<<" ) > qi::attr( ast::operator_::left_shift )
+          | lexer( ">>" ) > qi::attr( ast::operator_::right_shift )
+          | lexer( "+" ) > qi::attr( ast::operator_::add )
+          | lexer( "-" ) > qi::attr( ast::operator_::substract )
+          | lexer( "*" ) > qi::attr( ast::operator_::multiply )
+          | lexer( "/" ) > qi::attr( ast::operator_::divide )
+          | lexer( "%" ) > qi::attr( ast::operator_::modulus )
             ;
         
         unary_expression =
@@ -371,16 +370,16 @@ namespace ki {
             ;
         BOOST_SPIRIT_DEBUG_NODES((unary_expression));
         pre_unary_operator = 
-            qi::omit[ "++" ] > qi::attr( ast::operator_::pre_increment )
-          | qi::omit[ "--" ] > qi::attr( ast::operator_::pre_decrement )
-          | qi::omit[ "+" ] > qi::attr( ast::operator_::positive )
-          | qi::omit[ "-" ] > qi::attr( ast::operator_::negative )
-          | qi::omit[ "!" ] > qi::attr( ast::operator_::not_ )
-          | qi::omit[ "not" ] > qi::attr( ast::operator_::not_ )
-          | qi::omit[ "~" ] > qi::attr( ast::operator_::bitwise_not )
-          | qi::omit[ "*" ] > qi::attr( ast::operator_::dereference )
-          | qi::omit[ "&" ] > qi::attr( ast::operator_::address_of )
-          | qi::omit[ "sizeof" ] > qi::attr( ast::operator_::size_of )
+            lexer( "++" ) > qi::attr( ast::operator_::pre_increment )
+          | lexer( "--" ) > qi::attr( ast::operator_::pre_decrement )
+          | lexer( "+" ) > qi::attr( ast::operator_::positive )
+          | lexer( "-" ) > qi::attr( ast::operator_::negative )
+          | lexer( "!" ) > qi::attr( ast::operator_::not_ )
+          | lexer( "not" ) > qi::attr( ast::operator_::not_ )
+          | lexer( "~" ) > qi::attr( ast::operator_::bitwise_not )
+          | lexer( "*" ) > qi::attr( ast::operator_::dereference )
+          | lexer( "&" ) > qi::attr( ast::operator_::address_of )
+          | lexer( "sizeof" ) > qi::attr( ast::operator_::size_of )
             ;
 
         postfix_expression =
@@ -388,26 +387,26 @@ namespace ki {
                 primary_expression
              >> *(
                     ( post_unary_operator > qi::attr( boost::none ) )
-                  | ( '(' >> qi::attr( ast::operator_::function_call ) >> as_intermediate_argument_list[ -( expression % ',' ) ] >> ')' )
-                  | ( '[' >> qi::attr( ast::operator_::subscript ) >> expression >> ']' )
+                  | ( lexer( "(" ) >> qi::attr( ast::operator_::function_call ) >> as_intermediate_argument_list[ -( expression % lexer( "," ) ) ] >> lexer( ")" ) )
+                  | ( lexer( "[" ) >> qi::attr( ast::operator_::subscript ) >> expression >> lexer( "]" ) )
                   | ( post_binary_operator > primary_expression )
                 )
             ]
             ;
         BOOST_SPIRIT_DEBUG_NODES((postfix_expression));
         post_unary_operator =
-            qi::omit[ "++" ] > qi::attr( ast::operator_::post_increment )
-          | qi::omit[ "--" ] > qi::attr( ast::operator_::post_decrement )
+            lexer( "++" ) > qi::attr( ast::operator_::post_increment )
+          | lexer( "--" ) > qi::attr( ast::operator_::post_decrement )
             ;
         post_binary_operator = 
-            qi::omit[ "." ] > qi::attr( ast::operator_::member_access )
-          | qi::omit[ "->" ] > qi::attr( ast::operator_::pointer_access )
+            lexer( "." ) > qi::attr( ast::operator_::member_access )
+          | lexer( "->" ) > qi::attr( ast::operator_::pointer_access )
             ;
         
         primary_expression =
             literal
-          | "self"
-          | ( '(' > expression > ')' )
+          | lexer( "self" )
+          | ( lexer( "(" ) > expression > lexer( ")" ) )
           | identifier
             ;
         BOOST_SPIRIT_DEBUG_NODES((primary_expression));

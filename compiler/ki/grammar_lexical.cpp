@@ -13,8 +13,6 @@
 
 #include <boost/spirit/include/qi_as.hpp>
 #include <boost/spirit/include/qi_char_.hpp>
-#include <boost/spirit/include/qi_char_class.hpp>
-#include <boost/spirit/include/qi_lexeme.hpp>
 #include <boost/spirit/include/qi_nonterminal.hpp>
 #include <boost/spirit/include/qi_numeric.hpp>
 #include <boost/spirit/include/qi_operator.hpp>
@@ -22,50 +20,22 @@
 
 namespace ki {
 
-    void grammar::build_lexical_rules()
+    void grammar::build_lexical_rules( lexer const& lexer )
     {
-        keywords.add
-            ( "and" )
-            ( "auto" )
-            ( "axiom" )
-            ( "case" )
-            ( "class" )
-            ( "concept" )
-            ( "default" )
-            ( "delete" )
-            ( "do" )
-            ( "else" )
-            ( "explicit" )
-            ( "false" )
-            ( "for" )
-            ( "function" )
-            ( "if" )
-            ( "implicit" )
-            ( "namespace" )
-            ( "not" )
-            ( "null" )
-            ( "or" )
-            ( "requires" )
-            ( "return" )
-            ( "self" )
-            ( "sizeof" )
-            ( "switch" )
-            ( "true" )
-            ( "typeof" )
-            ( "using" )
-            ( "while" )
-            ;
-
         literal =
-            qi::as_string[ qi::raw[
-                qi::double_ | qi::int_ | qi::bool_ | '\'' > qi::char_ > '\'' | '"' > *qi::char_ > '"'
-            ] ]
+            qi::as_string[
+                lexer.int_literal
+              | lexer.bool_literal
+              | lexer.char_literal
+              | lexer.string_literal
+            ]
             ;
         BOOST_SPIRIT_DEBUG_NODES((literal));
         
         identifier =
-            !qi::lexeme[ keywords >> !( qi::alnum | '_' ) ]
-         >> qi::as_string[ qi::lexeme[ ( qi::alpha | '_' ) > *( qi::alnum | '_' ) ] ]
+            qi::as_string[
+                lexer.identifier
+            ]
             ;
         BOOST_SPIRIT_DEBUG_NODES((identifier));
 
