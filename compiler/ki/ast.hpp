@@ -400,10 +400,10 @@ namespace ki { namespace ast {
         if( right.operator_ == operator_::post_increment || right.operator_ == operator_::post_decrement )
         {
             return
-                left << '{' << right.operand << right.operator_ << '}';
+                left << right.operand << right.operator_;
         } else {
             return
-                left << '{' << right.operator_ << right.operand << '}';
+                left << right.operator_ << right.operand;
         }
     }
 
@@ -416,7 +416,7 @@ namespace ki { namespace ast {
     inline std::ostream& operator <<( std::ostream& left, binary_expression const& right )
     {
         return
-            left << '{' << right.left_operand << right.operator_ << right.right_operand << '}';
+            left << right.left_operand << right.operator_ << right.right_operand;
     }
     
     struct conditional_expression
@@ -428,7 +428,7 @@ namespace ki { namespace ast {
     inline std::ostream& operator <<( std::ostream& left, conditional_expression const& right )
     {
         return
-            left << '{' << right.condition << '?' << right.true_expression << ':' << right.false_expression << '}';
+            left << right.condition << '?' << right.true_expression << ':' << right.false_expression;
     }
 
     struct function_call_expression
@@ -439,7 +439,7 @@ namespace ki { namespace ast {
     inline std::ostream& operator <<( std::ostream& left, function_call_expression const& right )
     {
         return
-            left << '{' << right.function << '(' << right.arguments << ')' << '}';
+            left << right.function << '(' << right.arguments << ')';
     }
     
     struct intermediate_unary_expression
