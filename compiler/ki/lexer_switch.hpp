@@ -72,13 +72,16 @@ namespace ki {
         bool parse( Iterator& first, Iterator const& last, Context& /*context*/, Skipper const& skipper, Attribute& attr ) const
         {
             qi::skip_over( first, last, skipper );
-
-            TokenId const token_id = *first++;
-            std::map< TokenId, Attribute >::const_iterator token_iter = _tokens.find( token_id );
-            if( token_iter != _tokens.end() )
+            
+            if( first != last )
             {
-                spirit::traits::assign_to( token_iter->second, attr );
-                return true;
+                TokenId const token_id = *first++;
+                std::map< TokenId, Attribute >::const_iterator token_iter = _tokens.find( token_id );
+                if( token_iter != _tokens.end() )
+                {
+                    spirit::traits::assign_to( token_iter->second, attr );
+                    return true;
+                }
             }
             return false;
         }
