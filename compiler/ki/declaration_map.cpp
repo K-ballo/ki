@@ -28,7 +28,7 @@ namespace ki {
         void operator ()( ast::compound_statement& compound_statement ) const
         {
             std::for_each(
-                compound_statement.begin(), compound_statement.end()
+                compound_statement.body.begin(), compound_statement.body.end()
               , boost::apply_visitor( *this )
             );
         }

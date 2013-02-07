@@ -365,8 +365,14 @@ namespace ki { namespace ast {
         >
         statement;
 
-    struct compound_statement : std::vector< statement >
-    {};
+    struct compound_statement
+    {
+        std::vector< statement > body;
+    };
+    inline std::ostream& operator <<( std::ostream& left, compound_statement const& right )
+    {
+        return left << "{" << right.body << '}';
+    }
 
     struct return_statement
     {
@@ -459,18 +465,6 @@ namespace ki { namespace ast {
     struct intermediate_argument_list : std::vector< expression >
     {};
 
-    struct namespace_declaration
-    {
-        identifier name;
-        compound_statement body;
-    };
-    inline std::ostream& operator <<( std::ostream& left, namespace_declaration const& right )
-    {
-        return
-            left << "namespace " << right.name
-         << '{' << right.body << '}';
-    }
-
     struct variable_declaration
     {
         type_name type;
@@ -549,7 +543,7 @@ namespace ki { namespace ast {
         std::vector< parameter_declaration > parameters;
         std::vector< qualifier > qualifiers;
         std::vector< return_type > return_types;
-        compound_statement body;
+        std::vector< statement > body;
     };
     inline std::ostream& operator <<( std::ostream& left, function_declaration const& right )
     {
@@ -573,6 +567,18 @@ namespace ki { namespace ast {
          << '{' << right.members << '}';
     }
 
+    struct namespace_declaration
+    {
+        identifier name;
+        std::vector< statement > body;
+    };
+    inline std::ostream& operator <<( std::ostream& left, namespace_declaration const& right )
+    {
+        return
+            left << "namespace " << right.name
+         << '{' << right.body << '}';
+    }
+
 } } // namespace ki::ast
 
 BOOST_FUSION_ADAPT_STRUCT(
@@ -593,6 +599,11 @@ BOOST_FUSION_ADAPT_STRUCT(
 BOOST_FUSION_ADAPT_STRUCT(
     ki::ast::qualifier
   , (ki::ast::identifier, type)
+)
+
+BOOST_FUSION_ADAPT_STRUCT(
+    ki::ast::compound_statement
+  , (std::vector< ki::ast::statement >, body)
 )
 
 BOOST_FUSION_ADAPT_STRUCT(
@@ -639,12 +650,6 @@ BOOST_FUSION_ADAPT_STRUCT(
 )
 
 BOOST_FUSION_ADAPT_STRUCT(
-    ki::ast::namespace_declaration
-  , (ki::ast::identifier, name)
-    (ki::ast::compound_statement, body)
-)
-
-BOOST_FUSION_ADAPT_STRUCT(
     ki::ast::variable_declaration
   , (ki::ast::type_name, type)
     (ki::ast::identifier, name)
@@ -688,7 +693,7 @@ BOOST_FUSION_ADAPT_STRUCT(
     (std::vector< ki::ast::parameter_declaration >, parameters)
     (std::vector< ki::ast::qualifier >, qualifiers)
     (std::vector< ki::ast::return_type >, return_types)
-    (ki::ast::compound_statement, body)
+    (std::vector< ki::ast::statement >, body)
 )
 
 BOOST_FUSION_ADAPT_STRUCT(
@@ -696,6 +701,12 @@ BOOST_FUSION_ADAPT_STRUCT(
   , (ki::ast::identifier, name)
     (ki::ast::template_declaration, template_parameters)
     (ki::ast::class_declaration::members_type, members)
+)
+
+BOOST_FUSION_ADAPT_STRUCT(
+    ki::ast::namespace_declaration
+  , (ki::ast::identifier, name)
+    (std::vector< ki::ast::statement >, body)
 )
 
 #endif /*KI_AST_HPP*/
