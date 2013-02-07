@@ -40,7 +40,7 @@ namespace ki {
         return_statement =
             lexer( "return" ) > -expression > lexer( ";" )
             ;
-        BOOST_SPIRIT_DEBUG_NODES((compound_statement));
+        BOOST_SPIRIT_DEBUG_NODES((return_statement));
 
         declaration_statement =
             declaration.alias()
