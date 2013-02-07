@@ -41,9 +41,17 @@ namespace ki {
         {}
         
         template< BOOST_VARIANT_ENUM_PARAMS(typename T) >
-        void operator ()( boost::variant< BOOST_VARIANT_ENUM_PARAMS(T) > const& variant ) const
+        void operator ()( boost::variant< BOOST_VARIANT_ENUM_PARAMS(T) >& variant ) const
         {
             boost::apply_visitor( *this, variant );
+        }
+        template< typename T >
+        void operator ()( std::vector< T >& container ) const
+        {
+            std::for_each(
+                container.begin(), container.end()
+              , ( *this )
+            );
         }
 
         void operator ()( ast::compound_statement& compound_statement ) const
@@ -51,34 +59,26 @@ namespace ki {
             std::string const unnamed_scope = boost::lexical_cast< std::string >( _uuid_generator() );
             compound_statement._scope_name = _scope_name + "::" + unnamed_scope;
 
-            std::for_each(
-                compound_statement.body.begin(), compound_statement.body.end()
-              , boost::apply_visitor( process_declarations( _uuid_generator, _declarations, compound_statement._scope_name ) )
-            );
+            process_declarations process_scope( _uuid_generator, _declarations, compound_statement._scope_name );
+            process_scope( compound_statement.body );
         }
         
         void operator ()( ast::namespace_declaration& declaration ) const
         {
             declaration._scope_name = _scope_name + "::" + declaration.name.name;
             
-            std::for_each(
-                declaration.body.begin(), declaration.body.end()
-              , boost::apply_visitor( process_declarations( _uuid_generator, _declarations, declaration._scope_name ) )
-            );
+            process_declarations process_scope( _uuid_generator, _declarations, declaration._scope_name );
+            process_scope( declaration.body );
         }
         void operator ()( ast::class_declaration& declaration ) const
         {
             declaration._scope_name = _scope_name + "::" + declaration.name.name;
             
             _declarations->types.emplace( declaration._scope_name, &declaration );
-            std::for_each(
-                declaration.template_parameters.parameters.begin(), declaration.template_parameters.parameters.end()
-              , process_declarations( _uuid_generator, _declarations, declaration._scope_name )
-            );
-            std::for_each(
-                declaration.members.begin(), declaration.members.end()
-              , boost::apply_visitor( process_declarations( _uuid_generator, _declarations, declaration._scope_name ) )
-            );
+
+            process_declarations process_scope( _uuid_generator, _declarations, declaration._scope_name );
+            process_scope( declaration.template_parameters.parameters );
+            process_scope( declaration.members );
         }
         void operator ()( ast::variable_declaration& declaration ) const
         {
@@ -91,18 +91,11 @@ namespace ki {
             declaration._scope_name = _scope_name + "::" + declaration.name.name;
             
             _declarations->functions.emplace( declaration._scope_name, &declaration );
-            std::for_each(
-                declaration.template_parameters.parameters.begin(), declaration.template_parameters.parameters.end()
-              , process_declarations( _uuid_generator, _declarations, declaration._scope_name )
-            );
-            std::for_each(
-                declaration.parameters.begin(), declaration.parameters.end()
-              , process_declarations( _uuid_generator, _declarations, declaration._scope_name )
-            );
-            std::for_each(
-                declaration.body.begin(), declaration.body.end()
-              , boost::apply_visitor( process_declarations( _uuid_generator, _declarations, declaration._scope_name ) )
-            );
+            
+            process_declarations process_scope( _uuid_generator, _declarations, declaration._scope_name );
+            process_scope( declaration.template_parameters.parameters );
+            process_scope( declaration.parameters );
+            process_scope( declaration.body );
         }
 
         void operator ()( ast::template_parameter_declaration& declaration ) const
@@ -134,10 +127,7 @@ namespace ki {
         boost::mt19937 random( std::time(0) );
         uuid_generator_type uuid_generator( &random );
 
-        std::for_each(
-            statements.begin(), statements.end()
-          , process_declarations( uuid_generator, output )
-        );
+        process_declarations( uuid_generator, output )( statements );
     }
 
 } // namespace ki
