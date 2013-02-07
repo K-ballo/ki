@@ -28,7 +28,7 @@ namespace ki {
 
         namespace_declaration =
             lexer( "namespace" ) > identifier
-          > compound_statement
+          > lexer( "{" ) > *statement > lexer( "}" )
             ;
         BOOST_SPIRIT_DEBUG_NODES((namespace_declaration));
         
@@ -47,10 +47,10 @@ namespace ki {
         
         function_declaration =
             lexer( "function" ) > identifier
-         >> template_declaration
-         >> parameter_declaration_list >> *qualifier
-         >> return_type_list
-         >> compound_statement
+          > template_declaration
+          > parameter_declaration_list >  *qualifier
+          > return_type_list
+          > lexer( "{" ) > *statement > lexer( "}" )
             ;
         BOOST_SPIRIT_DEBUG_NODES((function_declaration));
         
