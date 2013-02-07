@@ -30,6 +30,8 @@ namespace ki {
     
     namespace qi = boost::spirit::qi;
 
+    struct error_handler;
+
     struct grammar
       : qi::grammar<
             lexer::iterator_type
@@ -38,7 +40,7 @@ namespace ki {
     {
         typedef lexer::iterator_type iterator;
 
-        explicit grammar( lexer const& lexer );
+        explicit grammar::grammar( lexer const& lexer, error_handler& handler );
 
         qi::rule< iterator, std::vector< ast::statement >() > start;
         

@@ -22,8 +22,34 @@
 namespace ki {
 
     namespace phoenix = boost::phoenix;
+    
+    struct error_handler
+    {
+        template< typename, typename >
+        struct result
+        {
+            typedef void type;
+        };
 
-    grammar::grammar( lexer const& lexer )
+        error_handler( char const* first, char const* last )
+          : _first( first ), _last( last )
+        {}
+
+        void operator ()( qi::info const& what, lexer::iterator_type const& where ) const
+        {
+            std::cout
+                << "Error! Expecting " << what << " here: "
+                << "\""
+                << std::string( where->matched().end(), _last )
+                << "\""
+                << std::endl;
+        }
+
+        char const* _first;
+        char const* _last;
+    };
+
+    grammar::grammar( lexer const& lexer, error_handler& handler )
       : grammar::base_type( start )
     {
         start =
@@ -39,20 +65,14 @@ namespace ki {
         qi::on_error< qi::fail >
         (
             start
-          , std::cout
-                << phoenix::val( "Error! Expecting " )
-                << qi::_4
-                << phoenix::val( " here: \"" )
-                << phoenix::construct< std::string >( qi::_3, qi::_2 )
-                << phoenix::val( "\"" )
-                << std::endl
+          , phoenix::function< error_handler >( handler )( qi::_4, qi::_3 )
         );
     }
-    
+
     bool compile( char const*& first, char const* last, std::vector< ki::ast::statement >& statements )
     {
         lexer lexer;
-        grammar grammar( lexer );
+        grammar grammar( lexer, error_handler( first, last ) );
 
         lexer::iterator_type iter = lexer.begin( first, last );
         lexer::iterator_type end = lexer.end();

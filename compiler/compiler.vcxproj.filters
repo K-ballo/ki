@@ -51,5 +51,8 @@
     <ClInclude Include="ki\lexer_switch.hpp">
       <Filter>ki</Filter>
     </ClInclude>
+    <ClInclude Include="ki\lit_token.hpp">
+      <Filter>ki</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

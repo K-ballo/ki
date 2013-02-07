@@ -12,6 +12,8 @@
 #ifndef KI_LEXER_HPP
 #define KI_LEXER_HPP
 
+#include "lit_token.hpp"
+
 #include <boost/assert.hpp>
 
 #include <boost/mpl/vector.hpp>
@@ -43,9 +45,9 @@ namespace ki {
     {
         typedef
             boost::spirit::result_of::terminal<
-                boost::spirit::tag::raw_token( id_type )
+                tag::lit_token( id_type, char const* )
             >::type
-            raw_token;
+            token_parser_type;
 
         explicit lexer();
 
@@ -60,9 +62,9 @@ namespace ki {
             return token_iter->second;
         }
 
-        raw_token operator ()( char const* literal ) const
+        token_parser_type operator ()( char const* literal ) const
         {
-            return qi::raw_token( id( literal ) );
+            return lit_token( id( literal ), literal );
         }
         
         lex::token_def< int > int_literal;
