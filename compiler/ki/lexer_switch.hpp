@@ -32,16 +32,16 @@ namespace ki {
     
     template <
         typename TokenId = std::size_t
-      , typename Attribute = qi::unused_type
+      , typename T = qi::unused_type
     >
     class lexer_switch
       : public proto::extends<
             typename proto::terminal<
-                qi::reference< lexer_switch< TokenId, Attribute > >
+                qi::reference< lexer_switch< TokenId, T > >
             >::type
-          , lexer_switch< TokenId, Attribute >
+          , lexer_switch< TokenId, T >
         >
-      , public qi::primitive_parser< lexer_switch< TokenId, Attribute > >
+      , public qi::primitive_parser< lexer_switch< TokenId, T > >
     {
         typedef qi::reference< lexer_switch > reference_;
         typedef typename proto::terminal< reference_ >::type terminal;
@@ -51,7 +51,7 @@ namespace ki {
         template< typename Context, typename Iterator >
         struct attribute
         {
-            typedef Attribute type;
+            typedef T type;
         };
         
     public:
@@ -60,7 +60,7 @@ namespace ki {
           , _name( name )
         {}
 
-        lexer_switch& add( TokenId token_id, Attribute const& attribute = Attribute() )
+        lexer_switch& add( TokenId token_id, T const& attribute = T() )
         {
             BOOST_ASSERT(( _tokens.find( token_id ) == _tokens.end() ));
 
@@ -76,7 +76,7 @@ namespace ki {
             if( first != last )
             {
                 TokenId const token_id = *first++;
-                std::map< TokenId, Attribute >::const_iterator token_iter = _tokens.find( token_id );
+                std::map< TokenId, T >::const_iterator token_iter = _tokens.find( token_id );
                 if( token_iter != _tokens.end() )
                 {
                     spirit::traits::assign_to( token_iter->second, attr );
@@ -102,22 +102,22 @@ namespace ki {
         }
 
     private:
-        std::map< TokenId, Attribute > _tokens;
+        std::map< TokenId, T > _tokens;
         std::string _name;
     };
 
-    template< typename TokenId, typename Attribute >
-    void debug( lexer_switch< TokenId, Attribute > const& /*rule*/ )
+    template< typename TokenId, typename T >
+    void debug( lexer_switch< TokenId, T > const& /*rule*/ )
     {}
 
 } // namespace ki
 
 namespace boost { namespace spirit { namespace qi {
 
-    template< typename TokenId, typename Attribute, typename Modifiers >
-    struct make_primitive< reference< ki::lexer_switch< TokenId, Attribute > >, Modifiers >
+    template< typename TokenId, typename T, typename Modifiers >
+    struct make_primitive< reference< ki::lexer_switch< TokenId, T > >, Modifiers >
     {
-        typedef reference< ki::lexer_switch< TokenId, Attribute > > reference_;
+        typedef reference< ki::lexer_switch< TokenId, T > > reference_;
 
         typedef reference_ result_type;
 
