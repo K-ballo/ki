@@ -14,8 +14,6 @@
 
 #include "ast.hpp"
 
-#include <boost/uuid/random_generator.hpp>
-
 #include <boost/variant/variant.hpp>
 
 #include <map>
@@ -28,47 +26,29 @@ namespace ki {
             ast::class_declaration*
           , ast::template_parameter_declaration*
         >
-        type_declaration;
+        type_declaration_ptr;
 
     typedef
         boost::variant<
             ast::variable_declaration*
           , ast::parameter_declaration*
         >
-        variable_declaration;
+        variable_declaration_ptr;
 
     typedef
         boost::variant<
             ast::function_declaration*
         >
-        function_declaration;
+        function_declaration_ptr;
 
     struct declaration_map
     {
-        std::multimap< std::string, type_declaration > types;
-        std::multimap< std::string, variable_declaration > variables;
-        std::multimap< std::string, function_declaration > functions;
-
-        explicit declaration_map()
-          : _random( std::time(0) )
-          , _uuid_generator( &_random )
-        {}
-
-        void insert( ast::statement& statement );
-
-        template< typename InputIterator >
-        void insert( InputIterator first, InputIterator last )
-        {
-            for( first; first != last; ++first )
-            {
-                insert( *first );
-            }
-        }
-
-        boost::mt19937 _random;
-        boost::uuids::basic_random_generator< boost::mt19937 > _uuid_generator;
-
+        std::multimap< std::string, type_declaration_ptr > types;
+        std::multimap< std::string, variable_declaration_ptr > variables;
+        std::multimap< std::string, function_declaration_ptr > functions;
     };
+
+    void declaration_phase( std::vector< ast::statement >& statements, declaration_map* output );
 
 } // namespace ki
 

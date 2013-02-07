@@ -22,6 +22,7 @@ int main( int argc, char* argv[] )
 function main() -> int\
 {\
   int one = two = three + four + five * not six * seven( 01, 02 )[03] + eight;\
+  { int abc = 2+2; }\
 }\
 }";
 //"return one = ++two[0]->anda.half <= three + four + five++()--[0]++ * not six * ++seven( 01, 02 )[03 ? true : false](04)[05] + eight;"
@@ -43,7 +44,7 @@ function main() -> int\
         );
 
         ki::declaration_map declarations;
-        declarations.insert( statements.begin(), statements.end() );
+        ki::declaration_phase( statements, &declarations );
 
         int breakpoint = 3;
     } else {
