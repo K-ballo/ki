@@ -11,6 +11,11 @@
 
 #include "declaration_map.hpp"
 
+#include <boost/lexical_cast.hpp>
+
+#include <boost/uuid/uuid.hpp>
+#include <boost/uuid/uuid_io.hpp>
+
 #include <boost/variant/apply_visitor.hpp>
 #include <boost/variant/static_visitor.hpp>
 
@@ -27,9 +32,12 @@ namespace ki {
 
         void operator ()( ast::compound_statement& compound_statement ) const
         {
+            std::string const unnamed_scope = boost::lexical_cast< std::string >( _declarations->_uuid_generator() );
+            compound_statement._scope_name = _scope_name + "::" + unnamed_scope;
+
             std::for_each(
                 compound_statement.body.begin(), compound_statement.body.end()
-              , boost::apply_visitor( *this )
+              , boost::apply_visitor( process_declarations( _declarations, compound_statement._scope_name ) )
             );
         }
         void operator ()( ast::declaration& declaration ) const
@@ -39,25 +47,25 @@ namespace ki {
         
         void operator ()( ast::namespace_declaration& declaration ) const
         {
-            std::string const qualified_name = _scope_name + "::" + declaration.name.name;
+            declaration._scope_name = _scope_name + "::" + declaration.name.name;
             
             std::for_each(
                 declaration.body.begin(), declaration.body.end()
-              , boost::apply_visitor( process_declarations( _declarations, qualified_name ) )
+              , boost::apply_visitor( process_declarations( _declarations, declaration._scope_name ) )
             );
         }
         void operator ()( ast::class_declaration& declaration ) const
         {
-            std::string const qualified_name = _scope_name + "::" + declaration.name.name;
+            declaration._scope_name = _scope_name + "::" + declaration.name.name;
             
-            _declarations->types.emplace( qualified_name, &declaration );
+            _declarations->types.emplace( declaration._scope_name, &declaration );
             std::for_each(
                 declaration.template_parameters.parameters.begin(), declaration.template_parameters.parameters.end()
-              , process_declarations( _declarations, qualified_name )
+              , process_declarations( _declarations, declaration._scope_name )
             );
             std::for_each(
                 declaration.members.begin(), declaration.members.end()
-              , boost::apply_visitor( process_declarations( _declarations, qualified_name ) )
+              , boost::apply_visitor( process_declarations( _declarations, declaration._scope_name ) )
             );
         }
         void operator ()( ast::variable_declaration& declaration ) const
@@ -68,20 +76,20 @@ namespace ki {
         }
         void operator ()( ast::function_declaration& declaration ) const
         {
-            std::string const qualified_name = _scope_name + "::" + declaration.name.name;
+            declaration._scope_name = _scope_name + "::" + declaration.name.name;
             
-            _declarations->functions.emplace( qualified_name, &declaration );
+            _declarations->functions.emplace( declaration._scope_name, &declaration );
             std::for_each(
                 declaration.template_parameters.parameters.begin(), declaration.template_parameters.parameters.end()
-              , process_declarations( _declarations, qualified_name )
+              , process_declarations( _declarations, declaration._scope_name )
             );
             std::for_each(
                 declaration.parameters.begin(), declaration.parameters.end()
-              , process_declarations( _declarations, qualified_name )
+              , process_declarations( _declarations, declaration._scope_name )
             );
             std::for_each(
                 declaration.body.begin(), declaration.body.end()
-              , boost::apply_visitor( process_declarations( _declarations, qualified_name ) )
+              , boost::apply_visitor( process_declarations( _declarations, declaration._scope_name ) )
             );
         }
 

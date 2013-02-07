@@ -14,6 +14,8 @@
 
 #include "ast.hpp"
 
+#include <boost/uuid/random_generator.hpp>
+
 #include <boost/variant/variant.hpp>
 
 #include <map>
@@ -47,6 +49,11 @@ namespace ki {
         std::multimap< std::string, variable_declaration > variables;
         std::multimap< std::string, function_declaration > functions;
 
+        explicit declaration_map()
+          : _random( std::time(0) )
+          , _uuid_generator( &_random )
+        {}
+
         void insert( ast::statement& statement );
 
         template< typename InputIterator >
@@ -57,6 +64,10 @@ namespace ki {
                 insert( *first );
             }
         }
+
+        boost::mt19937 _random;
+        boost::uuids::basic_random_generator< boost::mt19937 > _uuid_generator;
+
     };
 
 } // namespace ki

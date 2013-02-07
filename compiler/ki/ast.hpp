@@ -368,6 +368,8 @@ namespace ki { namespace ast {
     struct compound_statement
     {
         std::vector< statement > body;
+
+        std::string _scope_name;
     };
     inline std::ostream& operator <<( std::ostream& left, compound_statement const& right )
     {
@@ -544,6 +546,8 @@ namespace ki { namespace ast {
         std::vector< qualifier > qualifiers;
         std::vector< return_type > return_types;
         std::vector< statement > body;
+
+        std::string _scope_name;
     };
     inline std::ostream& operator <<( std::ostream& left, function_declaration const& right )
     {
@@ -559,6 +563,8 @@ namespace ki { namespace ast {
         identifier name;
         template_declaration template_parameters;
         members_type members;
+
+        std::string _scope_name;
     };
     inline std::ostream& operator <<( std::ostream& left, class_declaration const& right )
     {
@@ -571,6 +577,8 @@ namespace ki { namespace ast {
     {
         identifier name;
         std::vector< statement > body;
+
+        std::string _scope_name;
     };
     inline std::ostream& operator <<( std::ostream& left, namespace_declaration const& right )
     {
