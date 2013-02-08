@@ -47,6 +47,7 @@ namespace ki {
         void build_lexical_rules( lexer const& lexer );
         qi::rule< iterator, ast::literal() > literal;
         qi::rule< iterator, ast::identifier() > identifier;
+        qi::rule< iterator, ast::qualified_identifier() > qualified_identifier;
         qi::rule< iterator, ast::type_name() > type_name;
         qi::rule< iterator, ast::qualifier() > qualifier;
         

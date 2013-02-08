@@ -36,8 +36,8 @@ namespace ki {
           , declaration_map* declarations, std::string const& scope_name = std::string()
         ) : _uuid_generator( uuid_generator )
           
-          , _scope_name( scope_name )
           , _declarations( declarations )
+          , _scope_name( scope_name )
         {}
         
         template< BOOST_VARIANT_ENUM_PARAMS(typename T) >

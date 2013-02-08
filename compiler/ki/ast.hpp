@@ -48,6 +48,42 @@ namespace std { // don't do this!!!
 
 namespace ki { namespace ast {
 
+    struct unary_expression;
+    struct binary_expression;
+    struct conditional_expression;
+    struct function_call_expression;
+    
+    struct namespace_declaration;
+    struct class_declaration;
+    struct variable_declaration;
+    struct function_declaration;
+
+    struct template_parameter_declaration;
+    struct parameter_declaration;
+
+    struct compound_statement;
+    struct return_statement;
+
+    typedef
+        boost::variant<
+            ast::class_declaration*
+          , ast::template_parameter_declaration*
+        >
+        type_declaration_ptr;
+
+    typedef
+        boost::variant<
+            ast::variable_declaration*
+          , ast::parameter_declaration*
+        >
+        variable_declaration_ptr;
+
+    typedef
+        boost::variant<
+            ast::function_declaration*
+        >
+        function_declaration_ptr;
+
     struct literal
     {
         std::string value;
@@ -67,10 +103,29 @@ namespace ki { namespace ast {
         return
             left << right.name;
     }
+    
+    struct qualified_identifier
+    {
+        std::vector< identifier > name;
+    };
+    inline std::ostream& operator <<( std::ostream& left, qualified_identifier const& right )
+    {
+        if( !right.name.empty() )
+        {
+            std::copy(
+                right.name.begin(), right.name.end() - 1
+              , std::ostream_iterator< identifier >( left, "::" )
+            );
+            left << right.name.back();
+        }
+        return left;
+    }
 
     struct type_name
     {
-        identifier type;
+        qualified_identifier type;
+
+        type_declaration_ptr _declaration;
     };
     inline std::ostream& operator <<( std::ostream& left, type_name const& right )
     {
@@ -80,7 +135,7 @@ namespace ki { namespace ast {
     
     struct qualifier
     {
-        identifier type;
+        qualified_identifier type;
     };
     inline std::ostream& operator <<( std::ostream& left, qualifier const& right )
     {
@@ -309,16 +364,11 @@ namespace ki { namespace ast {
         return !is_right_associative( operator_ );
     }
 
-    struct unary_expression;
-    struct binary_expression;
-    struct conditional_expression;
-    struct function_call_expression;
-
     typedef
         boost::variant<
             boost::none_t
           , boost::recursive_wrapper< literal >
-          , boost::recursive_wrapper< identifier >
+          , boost::recursive_wrapper< qualified_identifier >
           , boost::recursive_wrapper< unary_expression >
           , boost::recursive_wrapper< binary_expression >
           , boost::recursive_wrapper< conditional_expression >
@@ -338,11 +388,6 @@ namespace ki { namespace ast {
           , boost::recursive_wrapper< intermediate_argument_list >
         >
         intermediate_expression;
-    
-    struct namespace_declaration;
-    struct class_declaration;
-    struct variable_declaration;
-    struct function_declaration;
 
     typedef
         boost::variant<
@@ -352,9 +397,6 @@ namespace ki { namespace ast {
           , boost::recursive_wrapper< function_declaration >
         >
         declaration;
-
-    struct compound_statement;
-    struct return_statement;
 
     typedef
         boost::variant<
@@ -476,7 +518,7 @@ namespace ki { namespace ast {
     };
     inline std::ostream& operator <<( std::ostream& left, variable_declaration const& right )
     {
-        left << right.type << ' ' << right.name << ':' << right.qualifiers << ':';
+        left << right.type << ' ' << right.name << '#' << right.qualifiers << '#';
         if( right.initialization )
         {
              left << '=' << *right.initialization;
@@ -524,7 +566,7 @@ namespace ki { namespace ast {
     inline std::ostream& operator <<( std::ostream& left, parameter_declaration const& right )
     {
         return
-            left << right.type << ' ' << right.name << ':' << right.qualifiers << ':';
+            left << right.type << ' ' << right.name << '#' << right.qualifiers << '#';
     }
 
     struct return_type
@@ -535,7 +577,7 @@ namespace ki { namespace ast {
     inline std::ostream& operator <<( std::ostream& left, return_type const& right )
     {
         return
-            left << right.type << ':' << right.qualifiers << ':';
+            left << right.type << '#' << right.qualifiers << '#';
     }
 
     struct function_declaration
@@ -552,7 +594,7 @@ namespace ki { namespace ast {
     inline std::ostream& operator <<( std::ostream& left, function_declaration const& right )
     {
         return
-            left << "function " << right.name << right.template_parameters << '(' << right.parameters << ')' << ':' << right.qualifiers << ':' << " -> " << right.return_types << '\n'
+            left << "function " << right.name << right.template_parameters << '(' << right.parameters << ')' << '#' << right.qualifiers << '#' << " -> " << right.return_types << '\n'
          << '{' << right.body << '}';
     }
 
@@ -600,13 +642,18 @@ BOOST_FUSION_ADAPT_STRUCT(
 )
 
 BOOST_FUSION_ADAPT_STRUCT(
+    ki::ast::qualified_identifier
+  , (std::vector< ki::ast::identifier >, name)
+)
+
+BOOST_FUSION_ADAPT_STRUCT(
     ki::ast::type_name
-  , (ki::ast::identifier, type)
+  , (ki::ast::qualified_identifier, type)
 )
 
 BOOST_FUSION_ADAPT_STRUCT(
     ki::ast::qualifier
-  , (ki::ast::identifier, type)
+  , (ki::ast::qualified_identifier, type)
 )
 
 BOOST_FUSION_ADAPT_STRUCT(

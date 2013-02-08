@@ -20,32 +20,12 @@
 #include <string>
 
 namespace ki {
-    
-    typedef
-        boost::variant<
-            ast::class_declaration*
-          , ast::template_parameter_declaration*
-        >
-        type_declaration_ptr;
-
-    typedef
-        boost::variant<
-            ast::variable_declaration*
-          , ast::parameter_declaration*
-        >
-        variable_declaration_ptr;
-
-    typedef
-        boost::variant<
-            ast::function_declaration*
-        >
-        function_declaration_ptr;
 
     struct declaration_map
     {
-        std::multimap< std::string, type_declaration_ptr > types;
-        std::multimap< std::string, variable_declaration_ptr > variables;
-        std::multimap< std::string, function_declaration_ptr > functions;
+        std::multimap< std::string, ast::type_declaration_ptr > types;
+        std::multimap< std::string, ast::variable_declaration_ptr > variables;
+        std::multimap< std::string, ast::function_declaration_ptr > functions;
     };
 
     void declaration_phase( std::vector< ast::statement >& statements, declaration_map* output );

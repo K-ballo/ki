@@ -325,7 +325,7 @@ namespace ki {
             literal
           | lexer( "self" )
           | ( lexer( "(" ) > expression > lexer( ")" ) )
-          | identifier
+          | qualified_identifier
             ;
         BOOST_SPIRIT_DEBUG_NODES((primary_expression));
 #       else
@@ -425,7 +425,7 @@ namespace ki {
             literal
           | lexer( "self" )
           | ( lexer( "(" ) > expression > lexer( ")" ) )
-          | identifier
+          | qualified_identifier
             ;
         BOOST_SPIRIT_DEBUG_NODES((primary_expression));
 #       endif /*KI_PRECEDENCE_AND_ASSOCIATIVITY_IN_GRAMMAR*/

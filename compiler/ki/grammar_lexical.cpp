@@ -12,11 +12,9 @@
 #include "grammar.hpp"
 
 #include <boost/spirit/include/qi_as.hpp>
-#include <boost/spirit/include/qi_char_.hpp>
+#include <boost/spirit/include/qi_attr.hpp>
 #include <boost/spirit/include/qi_nonterminal.hpp>
-#include <boost/spirit/include/qi_numeric.hpp>
 #include <boost/spirit/include/qi_operator.hpp>
-#include <boost/spirit/include/qi_raw.hpp>
 
 namespace ki {
 
@@ -38,14 +36,20 @@ namespace ki {
             ]
             ;
         BOOST_SPIRIT_DEBUG_NODES((identifier));
+        
+        qualified_identifier =
+            lexer( "::" ) >> /*qi::attr( ast::identifier() ) >>*/ identifier >> *( lexer( "::" ) >> identifier )
+          | identifier >> *( lexer( "::" ) > identifier )
+            ;
+        BOOST_SPIRIT_DEBUG_NODES((qualified_identifier));
 
         type_name =
-            identifier
+            qualified_identifier
             ;
         BOOST_SPIRIT_DEBUG_NODES((type_name));
 
         qualifier =
-            identifier
+            qualified_identifier
             ;
         BOOST_SPIRIT_DEBUG_NODES((qualifier));
             
