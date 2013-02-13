@@ -130,6 +130,7 @@
     <ClInclude Include="ki\lexer.hpp" />
     <ClInclude Include="ki\lexer_switch.hpp" />
     <ClInclude Include="ki\lit_token.hpp" />
+    <ClInclude Include="ki\scope.hpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

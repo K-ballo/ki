@@ -54,5 +54,8 @@
     <ClInclude Include="ki\lit_token.hpp">
       <Filter>ki</Filter>
     </ClInclude>
+    <ClInclude Include="ki\scope.hpp">
+      <Filter>ki</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>
