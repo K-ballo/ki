@@ -19,6 +19,7 @@
 
 #include <boost/variant/apply_visitor.hpp>
 #include <boost/variant/static_visitor.hpp>
+#include <boost/variant/variant.hpp>
 #include <boost/variant/variant_fwd.hpp>
 
 namespace ki {
@@ -59,24 +60,29 @@ namespace ki {
             std::string const unnamed_scope = boost::lexical_cast< std::string >( _uuid_generator() );
             compound_statement._scope_name = _scope_name + "::" + unnamed_scope;
 
-            process_declarations process_scope( _uuid_generator, _declarations, compound_statement._scope_name );
+            declaration_map& scope = _declarations->nest( unnamed_scope, scope_kind::block );
+
+            process_declarations process_scope( _uuid_generator, &scope, compound_statement._scope_name );
             process_scope( compound_statement.body );
         }
         
         void operator ()( ast::namespace_declaration& declaration ) const
         {
             declaration._scope_name = _scope_name + "::" + declaration.name.name;
+
+            declaration_map& scope = _declarations->nest( declaration.name.name, scope_kind::named );
             
-            process_declarations process_scope( _uuid_generator, _declarations, declaration._scope_name );
+            process_declarations process_scope( _uuid_generator, &scope, declaration._scope_name );
             process_scope( declaration.body );
         }
         void operator ()( ast::class_declaration& declaration ) const
         {
             declaration._scope_name = _scope_name + "::" + declaration.name.name;
             
-            _declarations->types.emplace( declaration._scope_name, &declaration );
+            _declarations->insert_type( declaration.name, &declaration );
+            declaration_map& scope = _declarations->nest( declaration.name.name, scope_kind::named );
 
-            process_declarations process_scope( _uuid_generator, _declarations, declaration._scope_name );
+            process_declarations process_scope( _uuid_generator, &scope, declaration._scope_name );
             process_scope( declaration.template_parameters.parameters );
             process_scope( declaration.members );
         }
@@ -84,15 +90,16 @@ namespace ki {
         {
             std::string const qualified_name = _scope_name + "::" + declaration.name.name;
 
-            _declarations->variables.emplace( qualified_name, &declaration );
+            _declarations->insert_object( declaration.name, &declaration );
         }
         void operator ()( ast::function_declaration& declaration ) const
         {
             declaration._scope_name = _scope_name + "::" + declaration.name.name;
             
-            _declarations->functions.emplace( declaration._scope_name, &declaration );
+            _declarations->insert_function( declaration.name, &declaration );
+            declaration_map& scope = _declarations->nest( declaration.name.name, scope_kind::function );
             
-            process_declarations process_scope( _uuid_generator, _declarations, declaration._scope_name );
+            process_declarations process_scope( _uuid_generator, &scope, declaration._scope_name );
             process_scope( declaration.template_parameters.parameters );
             process_scope( declaration.parameters );
             process_scope( declaration.body );
@@ -102,13 +109,13 @@ namespace ki {
         {
             std::string const qualified_name = _scope_name + "::" + declaration.name.name;
             
-            _declarations->types.emplace( qualified_name, &declaration );
+            _declarations->insert_type( declaration.name, &declaration );
         }
         void operator ()( ast::parameter_declaration& declaration ) const
         {
             std::string const qualified_name = _scope_name + "::" + declaration.name.name;
 
-            _declarations->variables.emplace( qualified_name, &declaration );
+            _declarations->insert_object( declaration.name, &declaration );
         }
 
         template< typename Statement >
