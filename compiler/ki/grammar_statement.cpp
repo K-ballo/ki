@@ -19,31 +19,41 @@ namespace ki {
     void grammar::build_statement_rules( lexer const& lexer )
     {
         statement =
-            expression_statement
-          | compound_statement
-          | return_statement
-          | declaration_statement
-          | lexer( ";" )
+            ast_annotated[
+                expression_statement
+              | compound_statement
+              | return_statement
+              | declaration_statement
+              | lexer( ";" )
+            ]
             ;
         BOOST_SPIRIT_DEBUG_NODES((statement));
         
         expression_statement =
-            expression >> lexer( ";" )
+            ast_annotated[
+                expression >> lexer( ";" )
+            ]
             ;
         BOOST_SPIRIT_DEBUG_NODES((expression_statement));
         
         compound_statement =
-            lexer( "{" ) > *statement > lexer( "}" )
+            ast_annotated[
+                lexer( "{" ) > *statement > lexer( "}" )
+            ]
             ;
         BOOST_SPIRIT_DEBUG_NODES((compound_statement));
         
         return_statement =
-            lexer( "return" ) > -expression > lexer( ";" )
+            ast_annotated[
+                lexer( "return" ) > -expression > lexer( ";" )
+            ]
             ;
         BOOST_SPIRIT_DEBUG_NODES((return_statement));
 
         declaration_statement =
-            declaration.alias()
+            ast_annotated[
+                declaration
+            ]
             ;
         BOOST_SPIRIT_DEBUG_NODES((declaration_statement));
     }

@@ -12,6 +12,8 @@
 #ifndef KI_AST_HPP
 #define KI_AST_HPP
 
+#include "lexer.hpp"
+
 #include <boost/assert.hpp>
 
 #include <boost/fusion/include/adapt_struct.hpp>
@@ -47,6 +49,12 @@ namespace std { // don't do this!!!
 } // namespace std
 
 namespace ki { namespace ast {
+
+    struct node
+    {
+        lexer::base_iterator_type _source_begin;
+        lexer::base_iterator_type _source_end;
+    };
 
     struct unary_expression;
     struct binary_expression;
@@ -84,7 +92,7 @@ namespace ki { namespace ast {
         >
         function_declaration_ptr;
 
-    struct literal
+    struct literal : node
     {
         std::string value;
     };
@@ -94,7 +102,7 @@ namespace ki { namespace ast {
             left << '`' << right.value << '`';
     }
     
-    struct identifier
+    struct identifier : node
     {
         std::string name;
     };
@@ -104,7 +112,7 @@ namespace ki { namespace ast {
             left << right.name;
     }
     
-    struct qualified_identifier
+    struct qualified_identifier : node
     {
         std::vector< identifier > name;
     };
@@ -121,7 +129,7 @@ namespace ki { namespace ast {
         return left;
     }
 
-    struct type_name
+    struct type_name : node
     {
         qualified_identifier type;
 
@@ -133,7 +141,7 @@ namespace ki { namespace ast {
             left << right.type;
     }
     
-    struct qualifier
+    struct qualifier : node
     {
         qualified_identifier type;
     };
@@ -407,7 +415,7 @@ namespace ki { namespace ast {
         >
         statement;
 
-    struct compound_statement
+    struct compound_statement : node
     {
         std::vector< statement > body;
 
@@ -418,7 +426,7 @@ namespace ki { namespace ast {
         return left << "{" << right.body << '}';
     }
 
-    struct return_statement
+    struct return_statement : node
     {
         boost::optional< expression > expression;
     };
@@ -432,7 +440,7 @@ namespace ki { namespace ast {
         return left << ';';
     }
 
-    struct unary_expression
+    struct unary_expression : node
     {
         operator_ operator_;
         expression operand;
@@ -449,7 +457,7 @@ namespace ki { namespace ast {
         }
     }
 
-    struct binary_expression
+    struct binary_expression : node
     {
         expression left_operand;
         operator_ operator_;
@@ -461,7 +469,7 @@ namespace ki { namespace ast {
             left << right.left_operand << right.operator_ << right.right_operand;
     }
     
-    struct conditional_expression
+    struct conditional_expression : node
     {
         expression condition;
         expression true_expression;
@@ -473,7 +481,7 @@ namespace ki { namespace ast {
             left << right.condition << '?' << right.true_expression << ':' << right.false_expression;
     }
 
-    struct function_call_expression
+    struct function_call_expression : node
     {
         expression function;
         std::vector< expression > arguments;
@@ -484,7 +492,7 @@ namespace ki { namespace ast {
             left << right.function << '(' << right.arguments << ')';
     }
     
-    struct intermediate_unary_expression
+    struct intermediate_unary_expression : node
     {
         operator_ operator_;
         intermediate_expression operand;
@@ -495,7 +503,7 @@ namespace ki { namespace ast {
             left << right.operator_ << right.operand;
     }
 
-    struct intermediate_binary_expression
+    struct intermediate_binary_expression : node
     {
         intermediate_expression operand;
         std::vector< intermediate_unary_expression > operations;
@@ -506,10 +514,16 @@ namespace ki { namespace ast {
             left << right.operand << right.operations;
     }
     
-    struct intermediate_argument_list : std::vector< expression >
-    {};
+    struct intermediate_argument_list : node
+    {
+        std::vector< expression > arguments;
+    };
+    inline std::ostream& operator <<( std::ostream& left, intermediate_argument_list const& right )
+    {
+        return left << right.arguments;
+    }
 
-    struct variable_declaration
+    struct variable_declaration : node
     {
         type_name type;
         identifier name;
@@ -526,7 +540,7 @@ namespace ki { namespace ast {
         return left << ';';
     }
     
-    struct template_parameter_declaration
+    struct template_parameter_declaration : node
     {
         identifier name;
     };
@@ -536,7 +550,7 @@ namespace ki { namespace ast {
             left << right.name;
     }
     
-    struct template_requirement_declaration
+    struct template_requirement_declaration : node
     {
         identifier concept;
     };
@@ -546,7 +560,7 @@ namespace ki { namespace ast {
             left << right.concept;
     }
     
-    struct template_declaration
+    struct template_declaration : node
     {
         std::vector< template_parameter_declaration > parameters;
         std::vector< template_requirement_declaration > requirements;
@@ -557,7 +571,7 @@ namespace ki { namespace ast {
             left << '<' << right.parameters << '>' << " requires " << '<' << right.requirements << '>';
     }
 
-    struct parameter_declaration
+    struct parameter_declaration : node
     {
         type_name type;
         identifier name;
@@ -569,7 +583,7 @@ namespace ki { namespace ast {
             left << right.type << ' ' << right.name << '#' << right.qualifiers << '#';
     }
 
-    struct return_type
+    struct return_type : node
     {
         type_name type;
         std::vector< qualifier > qualifiers;
@@ -580,7 +594,7 @@ namespace ki { namespace ast {
             left << right.type << '#' << right.qualifiers << '#';
     }
 
-    struct function_declaration
+    struct function_declaration : node
     {
         identifier name;
         template_declaration template_parameters;
@@ -598,7 +612,7 @@ namespace ki { namespace ast {
          << '{' << right.body << '}';
     }
 
-    struct class_declaration
+    struct class_declaration : node
     {
         typedef std::vector< boost::variant< variable_declaration, function_declaration > > members_type;
 
@@ -615,7 +629,7 @@ namespace ki { namespace ast {
          << '{' << right.members << '}';
     }
 
-    struct namespace_declaration
+    struct namespace_declaration : node
     {
         identifier name;
         std::vector< statement > body;
@@ -702,6 +716,11 @@ BOOST_FUSION_ADAPT_STRUCT(
     ki::ast::intermediate_binary_expression
   , (ki::ast::intermediate_expression, operand)
     (std::vector< ki::ast::intermediate_unary_expression >, operations)
+)
+
+BOOST_FUSION_ADAPT_STRUCT(
+    ki::ast::intermediate_argument_list
+  , (std::vector< ki::ast::expression >, arguments)
 )
 
 BOOST_FUSION_ADAPT_STRUCT(

@@ -17,6 +17,7 @@
 #include <boost/spirit/include/qi_action.hpp>
 #include <boost/spirit/include/qi_attr.hpp>
 #include <boost/spirit/include/qi_domain.hpp>
+#include <boost/spirit/include/qi_eps.hpp>
 #include <boost/spirit/include/qi_lazy.hpp>
 #include <boost/spirit/include/qi_nonterminal.hpp>
 #include <boost/spirit/include/qi_omit.hpp>
@@ -45,11 +46,11 @@ namespace ki {
             ;
         BOOST_SPIRIT_DEBUG_NODES((assignment_expression));
         assignment_expression_tail =
-            as_binary_expression[
+            ast_annotated[ as_binary_expression[
                 qi::attr( qi::_r1 ) >> assignment_operator >> assignment_expression
-            ] | as_conditional_expression[
+            ] ] | ast_annotated[ as_conditional_expression[
                 qi::attr( qi::_r1 ) >> lexer( "?" ) >> expression >> lexer( ":" ) >> expression
-            ] | qi::attr( qi::_r1 )
+            ] ] | qi::attr( qi::_r1 )
             ;
         BOOST_SPIRIT_DEBUG_NODES((assignment_expression_tail));
         assignment_operator
@@ -75,9 +76,9 @@ namespace ki {
         BOOST_SPIRIT_DEBUG_NODES((logical_or_expression));
         logical_or_expression_tail =
             qi::omit[
-                as_binary_expression[
+                ast_annotated[ as_binary_expression[
                     qi::attr( qi::_r1 ) >> logical_or_operator >> logical_and_expression
-                ][ qi::_a = qi::_1 ]
+                ] ][ qi::_a = qi::_1 ]
             ] > logical_or_expression_tail( qi::_a ) | qi::attr( qi::_r1 )
             ;
         BOOST_SPIRIT_DEBUG_NODES((logical_or_expression_tail));
@@ -95,9 +96,9 @@ namespace ki {
         BOOST_SPIRIT_DEBUG_NODES((logical_and_expression));
         logical_and_expression_tail =
             qi::omit[
-                as_binary_expression[
+                ast_annotated[ as_binary_expression[
                     qi::attr( qi::_r1 ) >> logical_and_operator >> bitwise_or_expression
-                ][ qi::_a = qi::_1 ]
+                ] ][ qi::_a = qi::_1 ]
             ] > logical_and_expression_tail( qi::_a ) | qi::attr( qi::_r1 )
             ;
         BOOST_SPIRIT_DEBUG_NODES((logical_and_expression_tail));
@@ -115,9 +116,9 @@ namespace ki {
         BOOST_SPIRIT_DEBUG_NODES((bitwise_or_expression));
         bitwise_or_expression_tail =
             qi::omit[
-                as_binary_expression[
+                ast_annotated[ as_binary_expression[
                     qi::attr( qi::_r1 ) >> bitwise_or_operator >> bitwise_xor_expression
-                ][ qi::_a = qi::_1 ]
+                ] ][ qi::_a = qi::_1 ]
             ] > bitwise_or_expression_tail( qi::_a ) | qi::attr( qi::_r1 )
             ;
         BOOST_SPIRIT_DEBUG_NODES((bitwise_or_expression_tail));
@@ -134,9 +135,9 @@ namespace ki {
         BOOST_SPIRIT_DEBUG_NODES((bitwise_xor_expression));
         bitwise_xor_expression_tail =
             qi::omit[
-                as_binary_expression[
+                ast_annotated[ as_binary_expression[
                     qi::attr( qi::_r1 ) >> bitwise_xor_operator >> bitwise_and_expression
-                ][ qi::_a = qi::_1 ]
+                ] ][ qi::_a = qi::_1 ]
             ] > bitwise_xor_expression_tail( qi::_a ) | qi::attr( qi::_r1 )
             ;
         BOOST_SPIRIT_DEBUG_NODES((bitwise_xor_expression_tail));
@@ -153,9 +154,9 @@ namespace ki {
         BOOST_SPIRIT_DEBUG_NODES((bitwise_and_expression));
         bitwise_and_expression_tail =
             qi::omit[
-                as_binary_expression[
+                ast_annotated[ as_binary_expression[
                     qi::attr( qi::_r1 ) >> bitwise_and_operator >> equality_expression
-                ][ qi::_a = qi::_1 ]
+                ] ][ qi::_a = qi::_1 ]
             ] > bitwise_and_expression_tail( qi::_a ) | qi::attr( qi::_r1 )
             ;
         BOOST_SPIRIT_DEBUG_NODES((bitwise_and_expression_tail));
@@ -172,9 +173,9 @@ namespace ki {
         BOOST_SPIRIT_DEBUG_NODES((equality_expression));
         equality_expression_tail =
             qi::omit[
-                as_binary_expression[
+                ast_annotated[ as_binary_expression[
                     qi::attr( qi::_r1 ) >> equality_operator >> relational_expression
-                ][ qi::_a = qi::_1 ]
+                ] ][ qi::_a = qi::_1 ]
             ] > equality_expression_tail( qi::_a ) | qi::attr( qi::_r1 )
             ;
         BOOST_SPIRIT_DEBUG_NODES((equality_expression_tail));
@@ -192,9 +193,9 @@ namespace ki {
         BOOST_SPIRIT_DEBUG_NODES((relational_expression));
         relational_expression_tail =
             qi::omit[
-                as_binary_expression[
+                ast_annotated[ as_binary_expression[
                     qi::attr( qi::_r1 ) >> relational_operator >> shift_expression
-                ][ qi::_a = qi::_1 ]
+                ] ][ qi::_a = qi::_1 ]
             ] > relational_expression_tail( qi::_a ) | qi::attr( qi::_r1 )
             ;
         BOOST_SPIRIT_DEBUG_NODES((relational_expression_tail));
@@ -214,9 +215,9 @@ namespace ki {
         BOOST_SPIRIT_DEBUG_NODES((shift_expression));
         shift_expression_tail =
             qi::omit[
-                as_binary_expression[
+                ast_annotated[ as_binary_expression[
                     qi::attr( qi::_r1 ) >> shift_operator >> additive_expression
-                ][ qi::_a = qi::_1 ]
+                ] ][ qi::_a = qi::_1 ]
             ] > shift_expression_tail( qi::_a ) | qi::attr( qi::_r1 )
             ;
         BOOST_SPIRIT_DEBUG_NODES((shift_expression_tail));
@@ -234,9 +235,9 @@ namespace ki {
         BOOST_SPIRIT_DEBUG_NODES((additive_expression));
         additive_expression_tail =
             qi::omit[
-                as_binary_expression[
+                ast_annotated[ as_binary_expression[
                     qi::attr( qi::_r1 ) >> additive_operator >> multiplicative_expression
-                ][ qi::_a = qi::_1 ]
+                ] ][ qi::_a = qi::_1 ]
             ] > additive_expression_tail( qi::_a ) | qi::attr( qi::_r1 )
             ;
         BOOST_SPIRIT_DEBUG_NODES((additive_expression_tail));
@@ -254,9 +255,9 @@ namespace ki {
         BOOST_SPIRIT_DEBUG_NODES((multiplicative_expression));
         multiplicative_expression_tail =
             qi::omit[
-                as_binary_expression[
+                ast_annotated[ as_binary_expression[
                     qi::attr( qi::_r1 ) >> multiplicative_operator >> unary_expression
-                ][ qi::_a = qi::_1 ]
+                ] ][ qi::_a = qi::_1 ]
             ] > multiplicative_expression_tail( qi::_a ) | qi::attr( qi::_r1 )
             ;
         BOOST_SPIRIT_DEBUG_NODES((multiplicative_expression_tail));
@@ -268,9 +269,9 @@ namespace ki {
         BOOST_SPIRIT_DEBUG_NODES((multiplicative_operator));
         
         unary_expression =
-            as_unary_expression[
+            ast_annotated[ as_unary_expression[
                 unary_operator >> unary_expression
-            ] | postfix_expression
+            ] ] | postfix_expression
             ;
         BOOST_SPIRIT_DEBUG_NODES((unary_expression));
         unary_operator
@@ -295,18 +296,18 @@ namespace ki {
         BOOST_SPIRIT_DEBUG_NODES((postfix_expression));
         postfix_expression_tail =
             qi::omit[
-                as_unary_expression[
+                ast_annotated[ as_unary_expression[
                     post_unary_operator >> qi::attr( qi::_r1 )
-                ][ qi::_a = qi::_1 ]
-              | as_function_call_expression[
+                ] ][ qi::_a = qi::_1 ]
+              | ast_annotated[ as_function_call_expression[
                     qi::attr( qi::_r1 ) >> lexer( "(" ) >> -( expression % lexer( "," ) ) >> lexer( ")" )
-                ][ qi::_a = qi::_1 ]
-              | as_binary_expression[
+                ] ][ qi::_a = qi::_1 ]
+              | ast_annotated[ as_binary_expression[
                     qi::attr( qi::_r1 ) >> lexer( "[" ) >> qi::attr( ast::operator_::subscript ) >> expression >> lexer( "]" )
-                ][ qi::_a = qi::_1 ]
-              | as_binary_expression[
+                ] ][ qi::_a = qi::_1 ]
+              | ast_annotated[ as_binary_expression[
                     qi::attr( qi::_r1 ) >> post_binary_operator >> primary_expression
-                ][ qi::_a = qi::_1 ]
+                ] ][ qi::_a = qi::_1 ]
             ] > postfix_expression_tail( qi::_a ) | qi::attr( qi::_r1 )
             ;
         BOOST_SPIRIT_DEBUG_NODES((postfix_expression_tail));
@@ -322,10 +323,12 @@ namespace ki {
         BOOST_SPIRIT_DEBUG_NODES((post_binary_operator));
         
         primary_expression =
-            literal
-          | lexer( "self" )
-          | ( lexer( "(" ) > expression > lexer( ")" ) )
-          | qualified_identifier
+            ast_annotated[
+                literal
+              | lexer( "self" )
+              | ( lexer( "(" ) > expression > lexer( ")" ) )
+              | qualified_identifier
+            ]
             ;
         BOOST_SPIRIT_DEBUG_NODES((primary_expression));
 #       else
@@ -335,13 +338,16 @@ namespace ki {
         BOOST_SPIRIT_DEBUG_NODES((expression));
 
         binary_expression =
-            as_intermediate_binary_expression[
-                unary_expression
-             >> *(
-                    ( pre_binary_operator > unary_expression )
-                  | ( lexer( "?" ) >> qi::attr( ast::operator_::conditional ) >> as_intermediate_argument_list[ expression >> lexer( ":" ) >> expression ] )
-                )
-            ]
+            ast_annotated[ as_intermediate_binary_expression[
+               unary_expression
+            >> *(
+                   ( pre_binary_operator > unary_expression )
+                 | (
+                       lexer( "?" ) >> qi::attr( ast::operator_::conditional )
+                    >> ast_annotated[ as_intermediate_argument_list[ expression >> lexer( ":" ) >> expression ] ]
+                   )
+               )
+            ] ]
             ;
         BOOST_SPIRIT_DEBUG_NODES((binary_expression));
         pre_binary_operator
@@ -380,8 +386,10 @@ namespace ki {
         BOOST_SPIRIT_DEBUG_NODES((pre_binary_operator));
         
         unary_expression =
-            postfix_expression
-          | as_intermediate_unary_expression[ pre_unary_operator > unary_expression ]
+            ast_annotated[
+                postfix_expression
+              | ast_annotated[ as_intermediate_unary_expression[ pre_unary_operator > unary_expression ] ]
+            ]
             ;
         BOOST_SPIRIT_DEBUG_NODES((unary_expression));
         pre_unary_operator
@@ -399,15 +407,22 @@ namespace ki {
         BOOST_SPIRIT_DEBUG_NODES((pre_unary_operator));
 
         postfix_expression =
-            as_intermediate_binary_expression[
-                primary_expression
-             >> *(
-                    ( post_unary_operator > qi::attr( boost::none ) )
-                  | ( lexer( "(" ) >> qi::attr( ast::operator_::function_call ) >> as_intermediate_argument_list[ -( expression % lexer( "," ) ) ] >> lexer( ")" ) )
-                  | ( lexer( "[" ) >> qi::attr( ast::operator_::subscript ) >> expression >> lexer( "]" ) )
-                  | ( post_binary_operator > primary_expression )
-                )
-            ]
+            ast_annotated[ as_intermediate_binary_expression[
+               primary_expression
+            >> *(
+                   ( post_unary_operator > qi::attr( boost::none ) )
+                 | (
+                       lexer( "(" ) >> qi::attr( ast::operator_::function_call )
+                    >> ast_annotated[ as_intermediate_argument_list[ -( expression % lexer( "," ) ) >> qi::eps ] ]
+                    >> lexer( ")" )
+                   )
+                 | (
+                       lexer( "[" ) >> qi::attr( ast::operator_::subscript )
+                    >> expression >> lexer( "]" )
+                   )
+                 | ( post_binary_operator > primary_expression )
+               )
+            ] ]
             ;
         BOOST_SPIRIT_DEBUG_NODES((postfix_expression));
         post_unary_operator
@@ -422,10 +437,12 @@ namespace ki {
         BOOST_SPIRIT_DEBUG_NODES((post_binary_operator));
         
         primary_expression =
-            literal
-          | lexer( "self" )
-          | ( lexer( "(" ) > expression > lexer( ")" ) )
-          | qualified_identifier
+            ast_annotated[
+                literal
+              | lexer( "self" )
+              | ( lexer( "(" ) > expression > lexer( ")" ) )
+              | qualified_identifier
+            ]
             ;
         BOOST_SPIRIT_DEBUG_NODES((primary_expression));
 #       endif /*KI_PRECEDENCE_AND_ASSOCIATIVITY_IN_GRAMMAR*/
@@ -444,6 +461,9 @@ namespace ki {
             ast::unary_expression expression;
             expression.operator_ = intermediate_unary_expression.operator_;
             expression.operand = boost::apply_visitor( *this, intermediate_unary_expression.operand );
+
+            expression._source_begin = intermediate_unary_expression._source_begin;
+            expression._source_end = intermediate_unary_expression._source_end;
 
             return expression;
         }
@@ -483,8 +503,8 @@ namespace ki {
                 case ast::operator_::conditional:
                     {
                         ast::conditional_expression conditional_operand;
-                        conditional_operand.true_expression = boost::get< ast::intermediate_argument_list const& >( first->operand )[0];
-                        conditional_operand.false_expression = boost::get< ast::intermediate_argument_list const& >( first->operand )[1];
+                        conditional_operand.true_expression = boost::get< ast::intermediate_argument_list const& >( first->operand ).arguments[0];
+                        conditional_operand.false_expression = boost::get< ast::intermediate_argument_list const& >( first->operand ).arguments[1];
                     
                         ++first;
 
@@ -494,7 +514,7 @@ namespace ki {
                 case ast::operator_::function_call:
                     {
                         ast::function_call_expression function_call_operand;
-                        function_call_operand.arguments = boost::get< ast::intermediate_argument_list const& >( first->operand );
+                        function_call_operand.arguments = boost::get< ast::intermediate_argument_list const& >( first->operand ).arguments;
                     
                         ++first;
 
@@ -540,6 +560,9 @@ namespace ki {
                             expression_node.true_expression = conditional.true_expression;
                             expression_node.false_expression = conditional.false_expression;
 
+                            expression_node._source_begin = get_ast_annotation( *operands_iter )._source_begin;
+                            expression_node._source_end = conditional._source_end;
+
                             expression = expression_node;
                             break;
                         }
@@ -549,6 +572,9 @@ namespace ki {
                             expression_node.left_operand = *operands_iter;
                             expression_node.operator_ = *operators_iter;
                             expression_node.right_operand = expression;
+                            
+                            expression_node._source_begin = get_ast_annotation( *operands_iter )._source_begin;
+                            expression_node._source_end = get_ast_annotation( expression )._source_end;
 
                             expression = expression_node;
                             break;
@@ -572,11 +598,14 @@ namespace ki {
                             boost::none_t const& none =
                                 boost::get< boost::none_t const& >( *operands_iter );
 
-                            ast::unary_expression post_unary_expression;
-                            post_unary_expression.operand = expression;
-                            post_unary_expression.operator_ = *operators_iter;
+                            ast::unary_expression expression_node;
+                            expression_node.operand = expression;
+                            expression_node.operator_ = *operators_iter;
+                            
+                            expression_node._source_begin = get_ast_annotation( expression )._source_begin;
+                            expression_node._source_end = get_ast_annotation( *operators_iter )._source_end;
 
-                            expression = post_unary_expression;
+                            expression = expression_node;
                             break;
                         }
                     case ast::operator_::function_call:
@@ -587,6 +616,9 @@ namespace ki {
                             ast::function_call_expression expression_node;
                             expression_node.function = expression;
                             expression_node.arguments = function_call.arguments;
+                            
+                            expression_node._source_begin = get_ast_annotation( expression )._source_begin;
+                            expression_node._source_end = function_call._source_end;
 
                             expression = expression_node;
                             break;
@@ -597,6 +629,9 @@ namespace ki {
                             expression_node.left_operand = expression;
                             expression_node.operator_ = *operators_iter;
                             expression_node.right_operand = *operands_iter;
+                            
+                            expression_node._source_begin = get_ast_annotation( expression )._source_begin;
+                            expression_node._source_end = get_ast_annotation( *operands_iter )._source_end;
 
                             expression = expression_node;
                             break;

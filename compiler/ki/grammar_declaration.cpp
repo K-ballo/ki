@@ -19,74 +19,98 @@ namespace ki {
     void grammar::build_declaration_rules( lexer const& lexer )
     {
         declaration =
-            namespace_declaration
-          | class_declaration
-          | variable_declaration
-          | function_declaration
+            ast_annotated[
+                namespace_declaration
+              | class_declaration
+              | variable_declaration
+              | function_declaration
+            ]
             ;
         BOOST_SPIRIT_DEBUG_NODES((declaration));
 
         namespace_declaration =
-            lexer( "namespace" ) > identifier
-          > lexer( "{" ) > *statement > lexer( "}" )
+            ast_annotated[
+                lexer( "namespace" ) > identifier
+              > lexer( "{" ) > *statement > lexer( "}" )
+            ]
             ;
         BOOST_SPIRIT_DEBUG_NODES((namespace_declaration));
         
         class_declaration =
-            lexer( "class" ) > identifier
-          > template_declaration
-          > lexer( "{" ) > *( variable_declaration | function_declaration ) > lexer( "}" )
+            ast_annotated[
+                lexer( "class" ) > identifier
+              > template_declaration
+              > lexer( "{" ) > *( variable_declaration | function_declaration ) > lexer( "}" )
+            ]
             ;
         BOOST_SPIRIT_DEBUG_NODES((class_declaration));
 
         variable_declaration =
-            type_name >> identifier >> *qualifier
-         >> -( lexer( "=" ) > expression ) > lexer( ";" )
+            ast_annotated[
+                type_name >> identifier >> *qualifier
+             >> -( lexer( "=" ) > expression ) > lexer( ";" )
+            ]
             ;
         BOOST_SPIRIT_DEBUG_NODES((variable_declaration));
         
         function_declaration =
-            lexer( "function" ) > identifier
-          > template_declaration
-          > parameter_declaration_list >  *qualifier
-          > return_type_list
-          > lexer( "{" ) > *statement > lexer( "}" )
+            ast_annotated[
+                lexer( "function" ) > identifier
+              > template_declaration
+              > parameter_declaration_list >  *qualifier
+              > return_type_list
+              > lexer( "{" ) > *statement > lexer( "}" )
+            ]
             ;
         BOOST_SPIRIT_DEBUG_NODES((function_declaration));
         
         template_declaration =
-            -( lexer( "<" ) > -( template_parameter_declaration % lexer( "," ) ) > lexer( ">" ) )
-          > -( lexer( "requires" ) > ( lexer( "<" ) > -( template_parameter_requirement % lexer( "," ) ) > lexer( ">" ) ) )
+            ast_annotated[
+                -( lexer( "<" ) > -( template_parameter_declaration % lexer( "," ) ) > lexer( ">" ) )
+              > -( lexer( "requires" ) > ( lexer( "<" ) > -( template_parameter_requirement % lexer( "," ) ) > lexer( ">" ) ) )
+            ]
             ;
         BOOST_SPIRIT_DEBUG_NODES((template_declaration));
 
         template_parameter_declaration =
-            lexer( "class" ) > identifier > *qualifier
+            ast_annotated[
+                lexer( "class" ) > identifier > *qualifier
+            ]
             ;
         BOOST_SPIRIT_DEBUG_NODES((template_parameter_declaration));
         
         template_parameter_requirement =
-            lexer( "class" ) > identifier
+            ast_annotated[
+                lexer( "class" ) > identifier
+            ]
             ;
         BOOST_SPIRIT_DEBUG_NODES((template_parameter_requirement));
         
         parameter_declaration_list =
-            lexer( "(" ) > -( parameter_declaration % lexer( "," ) ) > lexer( ")" )
+            ast_annotated[
+                lexer( "(" ) > -( parameter_declaration % lexer( "," ) ) > lexer( ")" )
+            ]
             ;
         BOOST_SPIRIT_DEBUG_NODES((parameter_declaration_list));
         
         parameter_declaration =
-            type_name > identifier > *qualifier
+            ast_annotated[
+                type_name > identifier > *qualifier
+            ]
             ;
         BOOST_SPIRIT_DEBUG_NODES((parameter_declaration));
         
         return_type_list =
-            lexer( "->" ) > ( ( lexer( "(" ) > ( return_type % lexer( "," ) ) > lexer( ")" ) ) | return_type )
+            ast_annotated[
+                lexer( "->" ) > ( ( lexer( "(" ) > ( return_type % lexer( "," ) ) > lexer( ")" ) ) | return_type )
+            ]
             ;
         BOOST_SPIRIT_DEBUG_NODES((return_type_list));
         
         return_type =
-            type_name > *qualifier
+            ast_annotated[
+                type_name > *qualifier
+            ]
             ;
         BOOST_SPIRIT_DEBUG_NODES((return_type));
     }

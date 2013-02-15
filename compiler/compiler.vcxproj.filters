@@ -57,5 +57,8 @@
     <ClInclude Include="ki\scope.hpp">
       <Filter>ki</Filter>
     </ClInclude>
+    <ClInclude Include="ki\ast_annotated.hpp">
+      <Filter>ki</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

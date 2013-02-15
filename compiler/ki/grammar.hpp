@@ -13,6 +13,7 @@
 #define KI_GRAMMAR_HPP
 
 #include "ast.hpp"
+#include "ast_annotated.hpp"
 #include "lexer.hpp"
 #include "lexer_switch.hpp"
 

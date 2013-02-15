@@ -124,6 +124,7 @@
     <ClCompile Include="main.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="ki\ast_annotated.hpp" />
     <ClInclude Include="ki\ast.hpp" />
     <ClInclude Include="ki\declaration_map.hpp" />
     <ClInclude Include="ki\grammar.hpp" />
