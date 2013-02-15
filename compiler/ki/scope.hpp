@@ -24,7 +24,8 @@ namespace ki {
 
     enum class scope_kind
     {
-        named
+        root = 0
+      , named
       , function
       , block
     };
