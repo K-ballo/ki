@@ -327,7 +327,7 @@ namespace ki {
                 literal
               | lexer( "self" )
               | ( lexer( "(" ) > expression > lexer( ")" ) )
-              | qualified_identifier
+              | as_identifier_expression[ qualified_identifier ]
             ]
             ;
         BOOST_SPIRIT_DEBUG_NODES((primary_expression));
@@ -441,7 +441,7 @@ namespace ki {
                 literal
               | lexer( "self" )
               | ( lexer( "(" ) > expression > lexer( ")" ) )
-              | qualified_identifier
+              | as_identifier_expression[ qualified_identifier ]
             ]
             ;
         BOOST_SPIRIT_DEBUG_NODES((primary_expression));

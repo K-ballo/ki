@@ -55,6 +55,7 @@ namespace ki {
         qi::rule< iterator, ast::expression() > expression;
 
 #       ifdef KI_PRECEDENCE_AND_ASSOCIATIVITY_IN_GRAMMAR
+        qi::as< ast::identifier_expression > as_identifier_expression;
         qi::as< ast::unary_expression > as_unary_expression;
         qi::as< ast::binary_expression > as_binary_expression;
         qi::as< ast::conditional_expression > as_conditional_expression;
@@ -114,6 +115,7 @@ namespace ki {
         
         qi::rule< iterator, ast::expression() > primary_expression;
 #       else
+        qi::as< ast::identifier_expression > as_identifier_expression;
         qi::as< ast::intermediate_unary_expression > as_intermediate_unary_expression;
         qi::as< ast::intermediate_binary_expression > as_intermediate_binary_expression;
         qi::as< ast::intermediate_argument_list > as_intermediate_argument_list;

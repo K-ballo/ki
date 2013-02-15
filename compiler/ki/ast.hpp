@@ -56,6 +56,7 @@ namespace ki { namespace ast {
         source_input::iterator _source_end;
     };
 
+    struct identifier_expression;
     struct unary_expression;
     struct binary_expression;
     struct conditional_expression;
@@ -376,7 +377,7 @@ namespace ki { namespace ast {
         boost::variant<
             boost::none_t
           , boost::recursive_wrapper< literal >
-          , boost::recursive_wrapper< qualified_identifier >
+          , boost::recursive_wrapper< identifier_expression >
           , boost::recursive_wrapper< unary_expression >
           , boost::recursive_wrapper< binary_expression >
           , boost::recursive_wrapper< conditional_expression >
@@ -438,6 +439,15 @@ namespace ki { namespace ast {
              left << *right.expression;
         }
         return left << ';';
+    }
+
+    struct identifier_expression : node
+    {
+        qualified_identifier identifier;
+    };
+    inline std::ostream& operator <<( std::ostream& left, identifier_expression const& right )
+    {
+        return left << right.identifier;
     }
 
     struct unary_expression : node
@@ -678,6 +688,11 @@ BOOST_FUSION_ADAPT_STRUCT(
 BOOST_FUSION_ADAPT_STRUCT(
     ki::ast::return_statement
   , (boost::optional< ki::ast::expression >, expression)
+)
+
+BOOST_FUSION_ADAPT_STRUCT(
+    ki::ast::identifier_expression
+  , (ki::ast::qualified_identifier, identifier)
 )
 
 BOOST_FUSION_ADAPT_STRUCT(
