@@ -91,6 +91,13 @@ namespace ki {
         add_literal( "->" );
         add_literal( "::" );
 
+        self.add( int_literal = "[0-9]+" );
+        self.add( bool_literal = "true|false" );
+        self.add( char_literal = "'.'" );
+        self.add( string_literal = "\\\".*\\\"" );
+
+        self.add( identifier = "[a-zA-Z_][a-zA-Z_0-9]*" );
+
         self +=
             lex::string( "\\/\\*[^*]*\\*+([^/*][^*]*\\*+)*\\/" )
             [
@@ -102,12 +109,7 @@ namespace ki {
             ]
             ;
 
-        self.add( int_literal = "[0-9]+" );
-        self.add( bool_literal = "true|false" );
-        self.add( char_literal = "'.'" );
-        self.add( string_literal = "\\\".*\\\"" );
-
-        self.add( identifier = "[a-zA-Z_][a-zA-Z_0-9]*" );
+        self.add( "." ); // everything else
     }
 
     lexer::id_type lexer::add_literal( char const* literal )
