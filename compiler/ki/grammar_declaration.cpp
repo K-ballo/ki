@@ -39,7 +39,8 @@ namespace ki {
         class_declaration =
             ast_annotated[
                 lexer( "class" ) > identifier
-              > template_declaration
+              > template_parameters_list
+              > requirements_list
               > lexer( "{" ) > *( variable_declaration | function_declaration ) > lexer( "}" )
             ]
             ;
@@ -56,21 +57,22 @@ namespace ki {
         function_declaration =
             ast_annotated[
                 lexer( "function" ) > identifier
-              > template_declaration
-              > parameter_declaration_list >  *qualifier
+              > template_parameters_list
+              > parameters_list
+              > requirements_list
+              > *qualifier
               > return_type_list
               > lexer( "{" ) > *statement > lexer( "}" )
             ]
             ;
         BOOST_SPIRIT_DEBUG_NODES((function_declaration));
         
-        template_declaration =
+        template_parameters_list =
             ast_annotated[
                 -( lexer( "<" ) > -( template_parameter_declaration % lexer( "," ) ) > lexer( ">" ) )
-              > -( lexer( "requires" ) > ( lexer( "<" ) > -( template_parameter_requirement % lexer( "," ) ) > lexer( ">" ) ) )
             ]
             ;
-        BOOST_SPIRIT_DEBUG_NODES((template_declaration));
+        BOOST_SPIRIT_DEBUG_NODES((template_parameters_list));
 
         template_parameter_declaration =
             ast_annotated[
@@ -79,19 +81,12 @@ namespace ki {
             ;
         BOOST_SPIRIT_DEBUG_NODES((template_parameter_declaration));
         
-        template_parameter_requirement =
-            ast_annotated[
-                lexer( "class" ) > identifier
-            ]
-            ;
-        BOOST_SPIRIT_DEBUG_NODES((template_parameter_requirement));
-        
-        parameter_declaration_list =
+        parameters_list =
             ast_annotated[
                 lexer( "(" ) > -( parameter_declaration % lexer( "," ) ) > lexer( ")" )
             ]
             ;
-        BOOST_SPIRIT_DEBUG_NODES((parameter_declaration_list));
+        BOOST_SPIRIT_DEBUG_NODES((parameters_list));
         
         parameter_declaration =
             ast_annotated[
@@ -99,6 +94,20 @@ namespace ki {
             ]
             ;
         BOOST_SPIRIT_DEBUG_NODES((parameter_declaration));
+        
+        requirements_list =
+            ast_annotated[
+                -( lexer( "requires" ) > ( lexer( "<" ) > -( requirement_declaration % lexer( "," ) ) > lexer( ">" ) ) )
+            ]
+            ;
+        BOOST_SPIRIT_DEBUG_NODES((template_parameters_list));
+
+        requirement_declaration =
+            ast_annotated[
+                type_name
+            ]
+            ;
+        BOOST_SPIRIT_DEBUG_NODES((requirement_declaration));
         
         return_type_list =
             ast_annotated[

@@ -147,12 +147,14 @@ namespace ki {
         qi::rule< iterator, ast::variable_declaration() > variable_declaration;
         qi::rule< iterator, ast::function_declaration() > function_declaration;
         
-        qi::rule< iterator, ast::template_declaration() > template_declaration;
+        qi::rule< iterator, std::vector< ast::template_parameter_declaration >() > template_parameters_list;
         qi::rule< iterator, ast::template_parameter_declaration() > template_parameter_declaration;
-        qi::rule< iterator, ast::template_requirement_declaration() > template_parameter_requirement;
 
-        qi::rule< iterator, std::vector< ast::parameter_declaration >() > parameter_declaration_list;
+        qi::rule< iterator, std::vector< ast::parameter_declaration >() > parameters_list;
         qi::rule< iterator, ast::parameter_declaration() > parameter_declaration;
+        
+        qi::rule< iterator, std::vector< ast::requirement_declaration >() > requirements_list;
+        qi::rule< iterator, ast::requirement_declaration() > requirement_declaration;
 
         qi::rule< iterator, std::vector< ast::return_type >() > return_type_list;
         qi::rule< iterator, ast::return_type() > return_type;

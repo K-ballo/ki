@@ -95,7 +95,8 @@ namespace ki {
             declaration_map& scope = _declarations->nest( declaration._scope_name, scope_kind::named );
 
             process_declarations process_scope( *this, &scope, declaration._scope_name );
-            process_scope( declaration.template_parameters.parameters );
+            process_scope( declaration.template_parameters );
+            process_scope( declaration.requirements );
             process_scope( declaration.members );
         }
         void operator ()( ast::variable_declaration& declaration ) const
@@ -110,8 +111,9 @@ namespace ki {
             declaration_map& scope = _declarations->nest( declaration._scope_name, scope_kind::function );
             
             process_declarations process_scope( *this, &scope, declaration._scope_name );
-            process_scope( declaration.template_parameters.parameters );
+            process_scope( declaration.template_parameters );
             process_scope( declaration.parameters );
+            process_scope( declaration.requirements );
             process_scope( declaration.body );
         }
 

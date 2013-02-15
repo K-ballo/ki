@@ -559,27 +559,6 @@ namespace ki { namespace ast {
         return
             left << right.name;
     }
-    
-    struct template_requirement_declaration : node
-    {
-        identifier concept;
-    };
-    inline std::ostream& operator <<( std::ostream& left, template_requirement_declaration const& right )
-    {
-        return
-            left << right.concept;
-    }
-    
-    struct template_declaration : node
-    {
-        std::vector< template_parameter_declaration > parameters;
-        std::vector< template_requirement_declaration > requirements;
-    };
-    inline std::ostream& operator <<( std::ostream& left, template_declaration const& right )
-    {
-        return
-            left << '<' << right.parameters << '>' << " requires " << '<' << right.requirements << '>';
-    }
 
     struct parameter_declaration : node
     {
@@ -591,6 +570,16 @@ namespace ki { namespace ast {
     {
         return
             left << right.type << ' ' << right.name << '#' << right.qualifiers << '#';
+    }
+    
+    struct requirement_declaration : node
+    {
+        ki::ast::type_name concept;
+    };
+    inline std::ostream& operator <<( std::ostream& left, requirement_declaration const& right )
+    {
+        return
+            left << right.concept;
     }
 
     struct return_type : node
@@ -607,8 +596,9 @@ namespace ki { namespace ast {
     struct function_declaration : node
     {
         identifier name;
-        template_declaration template_parameters;
+        std::vector< template_parameter_declaration > template_parameters;
         std::vector< parameter_declaration > parameters;
+        std::vector< requirement_declaration > requirements;
         std::vector< qualifier > qualifiers;
         std::vector< return_type > return_types;
         std::vector< statement > body;
@@ -618,8 +608,14 @@ namespace ki { namespace ast {
     inline std::ostream& operator <<( std::ostream& left, function_declaration const& right )
     {
         return
-            left << "function " << right.name << right.template_parameters << '(' << right.parameters << ')' << '#' << right.qualifiers << '#' << " -> " << right.return_types << '\n'
-         << '{' << right.body << '}';
+            left
+             << "function " << right.name
+             << '<' << right.template_parameters << '>'
+             << '(' << right.parameters << ')'
+             << " requires " << '<' << right.requirements << '>'
+             << '#' << right.qualifiers << '#'
+             << " -> " << right.return_types << '\n'
+             << '{' << right.body << '}';
     }
 
     struct class_declaration : node
@@ -627,7 +623,8 @@ namespace ki { namespace ast {
         typedef std::vector< boost::variant< variable_declaration, function_declaration > > members_type;
 
         identifier name;
-        template_declaration template_parameters;
+        std::vector< template_parameter_declaration > template_parameters;
+        std::vector< requirement_declaration > requirements;
         members_type members;
 
         std::string _scope_name;
@@ -635,8 +632,11 @@ namespace ki { namespace ast {
     inline std::ostream& operator <<( std::ostream& left, class_declaration const& right )
     {
         return
-            left << "class " << right.name << right.template_parameters << '\n'
-         << '{' << right.members << '}';
+            left
+             << "class " << right.name
+             << '<' << right.template_parameters << '>'
+             << " requires " << '<' << right.requirements << '>'
+             << '{' << right.members << '}';
     }
 
     struct namespace_declaration : node
@@ -752,21 +752,15 @@ BOOST_FUSION_ADAPT_STRUCT(
 )
 
 BOOST_FUSION_ADAPT_STRUCT(
-    ki::ast::template_requirement_declaration
-  , (ki::ast::identifier, concept)
-)
-
-BOOST_FUSION_ADAPT_STRUCT(
-    ki::ast::template_declaration
-  , (std::vector< ki::ast::template_parameter_declaration >, parameters)
-    (std::vector< ki::ast::template_requirement_declaration>, requirements)
-)
-
-BOOST_FUSION_ADAPT_STRUCT(
     ki::ast::parameter_declaration
   , (ki::ast::type_name, type)
     (ki::ast::identifier, name)
     (std::vector< ki::ast::qualifier >, qualifiers)
+)
+
+BOOST_FUSION_ADAPT_STRUCT(
+    ki::ast::requirement_declaration
+  , (ki::ast::type_name, concept)
 )
 
 BOOST_FUSION_ADAPT_STRUCT(
@@ -778,8 +772,9 @@ BOOST_FUSION_ADAPT_STRUCT(
 BOOST_FUSION_ADAPT_STRUCT(
     ki::ast::function_declaration
   , (ki::ast::identifier, name)
-    (ki::ast::template_declaration, template_parameters)
+    (std::vector< ki::ast::template_parameter_declaration >, template_parameters)
     (std::vector< ki::ast::parameter_declaration >, parameters)
+    (std::vector< ki::ast::requirement_declaration >, requirements)
     (std::vector< ki::ast::qualifier >, qualifiers)
     (std::vector< ki::ast::return_type >, return_types)
     (std::vector< ki::ast::statement >, body)
@@ -788,7 +783,8 @@ BOOST_FUSION_ADAPT_STRUCT(
 BOOST_FUSION_ADAPT_STRUCT(
     ki::ast::class_declaration
   , (ki::ast::identifier, name)
-    (ki::ast::template_declaration, template_parameters)
+    (std::vector< ki::ast::template_parameter_declaration >, template_parameters)
+    (std::vector< ki::ast::requirement_declaration >, requirements)
     (ki::ast::class_declaration::members_type, members)
 )
 
