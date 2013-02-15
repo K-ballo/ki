@@ -31,7 +31,7 @@ namespace ki {
             typedef void type;
         };
 
-        error_handler( char const* first, char const* last )
+        error_handler( lexer::base_iterator_type first, lexer::base_iterator_type last )
           : _first( first ), _last( last )
         {}
 
@@ -45,8 +45,8 @@ namespace ki {
                 << std::endl;
         }
 
-        char const* _first;
-        char const* _last;
+        lexer::base_iterator_type _first;
+        lexer::base_iterator_type _last;
     };
 
     grammar::grammar( lexer const& lexer, error_handler& handler )
@@ -68,8 +68,11 @@ namespace ki {
           , phoenix::function< error_handler >( handler )( qi::_4, qi::_3 )
         );
     }
-
-    bool compile( char const*& first, char const* last, std::vector< ki::ast::statement >& statements )
+    
+    bool compile(
+        lexer::base_iterator_type& first, lexer::base_iterator_type const& last
+      , std::vector< ki::ast::statement >& statements
+    )
     {
         lexer lexer;
         grammar grammar( lexer, error_handler( first, last ) );

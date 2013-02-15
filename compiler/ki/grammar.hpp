@@ -156,7 +156,10 @@ namespace ki {
         qi::rule< iterator, ast::return_type() > return_type;
     };
     
-    bool compile( char const*& first, char const* last, std::vector< ki::ast::statement >& statements );
+    bool compile(
+        lexer::base_iterator_type& first, lexer::base_iterator_type const& last
+      , std::vector< ki::ast::statement >& statements
+    );
 
 } // namespace ki
 

@@ -43,6 +43,8 @@ namespace ki {
             lex::lexertl::actor_lexer< lexer_token_type >
         >
     {
+        typedef char const* base_iterator_type;
+
         typedef
             boost::spirit::result_of::terminal<
                 tag::lit_token( id_type, char const* )
