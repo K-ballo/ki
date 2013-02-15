@@ -12,7 +12,7 @@
 #ifndef KI_AST_HPP
 #define KI_AST_HPP
 
-#include "lexer.hpp"
+#include "source_input.hpp"
 
 #include <boost/assert.hpp>
 
@@ -52,8 +52,8 @@ namespace ki { namespace ast {
 
     struct node
     {
-        lexer::base_iterator_type _source_begin;
-        lexer::base_iterator_type _source_end;
+        source_input::iterator _source_begin;
+        source_input::iterator _source_end;
     };
 
     struct unary_expression;
@@ -84,7 +84,7 @@ namespace ki { namespace ast {
             ast::variable_declaration*
           , ast::parameter_declaration*
         >
-        variable_declaration_ptr;
+        object_declaration_ptr;
 
     typedef
         boost::variant<

@@ -34,6 +34,9 @@
     <ClCompile Include="ki\lexer.cpp">
       <Filter>ki</Filter>
     </ClCompile>
+    <ClCompile Include="ki\error_handler.cpp">
+      <Filter>ki</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="ki\grammar.hpp">
@@ -58,6 +61,12 @@
       <Filter>ki</Filter>
     </ClInclude>
     <ClInclude Include="ki\ast_annotated.hpp">
+      <Filter>ki</Filter>
+    </ClInclude>
+    <ClInclude Include="ki\source_input.hpp">
+      <Filter>ki</Filter>
+    </ClInclude>
+    <ClInclude Include="ki\error_handler.hpp">
       <Filter>ki</Filter>
     </ClInclude>
   </ItemGroup>

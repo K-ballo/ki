@@ -13,6 +13,7 @@
 #define KI_LEXER_HPP
 
 #include "lit_token.hpp"
+#include "source_input.hpp"
 
 #include <boost/assert.hpp>
 
@@ -32,7 +33,7 @@ namespace ki {
 
     typedef
         lex::lexertl::position_token<
-            char const*
+            source_input::iterator
           , boost::mpl::vector< int, bool, char, std::string >
           , boost::mpl::false_
         >
@@ -43,8 +44,6 @@ namespace ki {
             lex::lexertl::actor_lexer< lexer_token_type >
         >
     {
-        typedef char const* base_iterator_type;
-
         typedef
             boost::spirit::result_of::terminal<
                 tag::lit_token( id_type, char const* )

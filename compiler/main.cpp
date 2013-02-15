@@ -11,6 +11,8 @@
 
 #include "ki/declaration_map.hpp"
 #include "ki/grammar.hpp"
+#include "ki/scope.hpp"
+#include "ki/source_input.hpp"
 
 #include <iostream>
 #include <string>
@@ -18,20 +20,20 @@
 int main( int argc, char* argv[] )
 {
     std::string const input =
-"namespace test {\
-function main() -> int\
-{\
-  int one = two = three + four + five * not six * seven( 01, 02 )[03] + eight;\
-  { int abc = 2+2; }\
-}\
+"namespace test {\n\
+class c { int m; function f() ->void {} }\n\
+function main() -> int\n\
+{\n\
+  c tc;\n\
+  int one = two = three + four + five * not six * seven( 01, 02 )[03] + eight;\n\
+  { ::int abc = 2+2; }\n\
+}\n\
 }";
-//"return one = ++two[0]->anda.half <= three + four + five++()--[0]++ * not six * ++seven( 01, 02 )[03 ? true : false](04)[05] + eight;"
 
-    char const* first = &input.front();
-    char const* last = &input.back() + 1;
+    ki::source_input source( "test.cpp", &input.front(), &input.back() + 1 );
 
     std::vector< ki::ast::statement > statements;
-    bool result = ki::compile( first, last, statements );
+    bool result = ki::compile( source, statements );
     if( result )
     {
         std::cout
@@ -43,18 +45,15 @@ function main() -> int\
           , std::ostream_iterator< ki::ast::statement >( std::clog, "\n\n" )
         );
 
-        ki::declaration_map declarations;
-        ki::declaration_phase( statements, &declarations );
+        ki::declaration_map declarations( "", ki::scope_kind::root );
+        ki::declaration_map& global_declarations = declarations.nest( "", ki::scope_kind::named );
+        ki::declaration_phase( source, statements, &global_declarations );
 
         int breakpoint = 3;
     } else {
-        std::string const rest( first, last );
-
-        std::clog
+        std::cout
             << "\n-----------\n"
             << "Lexical analysis failed\n"
-            << "stopped at: \""
-            << rest << "\"\n"
             ;
     }
 

@@ -115,6 +115,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="ki\declaration_map.cpp" />
+    <ClCompile Include="ki\error_handler.cpp" />
     <ClCompile Include="ki\grammar_declaration.cpp" />
     <ClCompile Include="ki\grammar_expression.cpp" />
     <ClCompile Include="ki\grammar.cpp" />
@@ -127,6 +128,8 @@
     <ClInclude Include="ki\ast_annotated.hpp" />
     <ClInclude Include="ki\ast.hpp" />
     <ClInclude Include="ki\declaration_map.hpp" />
+    <ClInclude Include="ki\error_handler.hpp" />
+    <ClInclude Include="ki\source_input.hpp" />
     <ClInclude Include="ki\grammar.hpp" />
     <ClInclude Include="ki\lexer.hpp" />
     <ClInclude Include="ki\lexer_switch.hpp" />

@@ -11,6 +11,8 @@
 
 #include "declaration_map.hpp"
 
+#include "error_handler.hpp"
+
 #include <boost/lexical_cast.hpp>
 
 #include <boost/uuid/random_generator.hpp>
@@ -33,9 +35,20 @@ namespace ki {
     {
     public:
         explicit process_declarations(
-            uuid_generator_type& uuid_generator
+            error_handler const& error_handler
+          , uuid_generator_type& uuid_generator
           , declaration_map* declarations, std::string const& scope_name = std::string()
-        ) : _uuid_generator( uuid_generator )
+        ) : _error_handler( error_handler )
+          , _uuid_generator( uuid_generator )
+          
+          , _declarations( declarations )
+          , _scope_name( scope_name )
+        {}
+        explicit process_declarations(
+            process_declarations const& other
+          , declaration_map* declarations, std::string const& scope_name = std::string()
+        ) : _error_handler( other._error_handler )
+          , _uuid_generator( other._uuid_generator )
           
           , _declarations( declarations )
           , _scope_name( scope_name )
@@ -55,51 +68,48 @@ namespace ki {
             );
         }
 
-        void operator ()( ast::compound_statement& compound_statement ) const
+        void operator ()( ast::compound_statement& statement ) const
         {
-            std::string const unnamed_scope = boost::lexical_cast< std::string >( _uuid_generator() );
-            compound_statement._scope_name = _scope_name + "::" + unnamed_scope;
+            statement._scope_name = boost::lexical_cast< std::string >( _uuid_generator() );
 
-            declaration_map& scope = _declarations->nest( unnamed_scope, scope_kind::block );
+            declaration_map& scope = _declarations->nest( statement._scope_name, scope_kind::block );
 
-            process_declarations process_scope( _uuid_generator, &scope, compound_statement._scope_name );
-            process_scope( compound_statement.body );
+            process_declarations process_scope( *this, &scope, statement._scope_name );
+            process_scope( statement.body );
         }
         
         void operator ()( ast::namespace_declaration& declaration ) const
         {
-            declaration._scope_name = _scope_name + "::" + declaration.name.name;
+            declaration._scope_name = declaration.name.name;
 
-            declaration_map& scope = _declarations->nest( declaration.name.name, scope_kind::named );
+            declaration_map& scope = _declarations->nest( declaration._scope_name, scope_kind::named );
             
-            process_declarations process_scope( _uuid_generator, &scope, declaration._scope_name );
+            process_declarations process_scope( *this, &scope, declaration._scope_name );
             process_scope( declaration.body );
         }
         void operator ()( ast::class_declaration& declaration ) const
         {
-            declaration._scope_name = _scope_name + "::" + declaration.name.name;
+            declaration._scope_name = declaration.name.name;
             
             _declarations->insert_type( declaration.name, &declaration );
-            declaration_map& scope = _declarations->nest( declaration.name.name, scope_kind::named );
+            declaration_map& scope = _declarations->nest( declaration._scope_name, scope_kind::named );
 
-            process_declarations process_scope( _uuid_generator, &scope, declaration._scope_name );
+            process_declarations process_scope( *this, &scope, declaration._scope_name );
             process_scope( declaration.template_parameters.parameters );
             process_scope( declaration.members );
         }
         void operator ()( ast::variable_declaration& declaration ) const
         {
-            std::string const qualified_name = _scope_name + "::" + declaration.name.name;
-
             _declarations->insert_object( declaration.name, &declaration );
         }
         void operator ()( ast::function_declaration& declaration ) const
         {
-            declaration._scope_name = _scope_name + "::" + declaration.name.name;
+            declaration._scope_name = declaration.name.name;
             
             _declarations->insert_function( declaration.name, &declaration );
-            declaration_map& scope = _declarations->nest( declaration.name.name, scope_kind::function );
+            declaration_map& scope = _declarations->nest( declaration._scope_name, scope_kind::function );
             
-            process_declarations process_scope( _uuid_generator, &scope, declaration._scope_name );
+            process_declarations process_scope( *this, &scope, declaration._scope_name );
             process_scope( declaration.template_parameters.parameters );
             process_scope( declaration.parameters );
             process_scope( declaration.body );
@@ -107,14 +117,10 @@ namespace ki {
 
         void operator ()( ast::template_parameter_declaration& declaration ) const
         {
-            std::string const qualified_name = _scope_name + "::" + declaration.name.name;
-            
             _declarations->insert_type( declaration.name, &declaration );
         }
         void operator ()( ast::parameter_declaration& declaration ) const
         {
-            std::string const qualified_name = _scope_name + "::" + declaration.name.name;
-
             _declarations->insert_object( declaration.name, &declaration );
         }
 
@@ -123,18 +129,24 @@ namespace ki {
         {}
 
     private:
+        error_handler const& _error_handler;
         uuid_generator_type& _uuid_generator;
 
         declaration_map* _declarations;
         std::string _scope_name;
     };
-
-    void declaration_phase( std::vector< ast::statement >& statements, declaration_map* output )
+    
+    void declaration_phase(
+        source_input const& source
+      , std::vector< ast::statement >& statements
+      , declaration_map* output
+    )
     {
         boost::mt19937 random( std::time(0) );
         uuid_generator_type uuid_generator( &random );
 
-        process_declarations( uuid_generator, output )( statements );
+        process_declarations visitor( error_handler( source ), uuid_generator, output );
+        visitor( statements );
     }
 
 } // namespace ki

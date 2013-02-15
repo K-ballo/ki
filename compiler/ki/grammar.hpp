@@ -14,6 +14,7 @@
 
 #include "ast.hpp"
 #include "ast_annotated.hpp"
+#include "error_handler.hpp"
 #include "lexer.hpp"
 #include "lexer_switch.hpp"
 
@@ -31,8 +32,6 @@ namespace ki {
     
     namespace qi = boost::spirit::qi;
 
-    struct error_handler;
-
     struct grammar
       : qi::grammar<
             lexer::iterator_type
@@ -41,7 +40,7 @@ namespace ki {
     {
         typedef lexer::iterator_type iterator;
 
-        explicit grammar::grammar( lexer const& lexer, error_handler& handler );
+        explicit grammar::grammar( lexer const& lexer, error_handler const& error_handler );
 
         qi::rule< iterator, std::vector< ast::statement >() > start;
         
@@ -158,7 +157,7 @@ namespace ki {
     };
     
     bool compile(
-        lexer::base_iterator_type& first, lexer::base_iterator_type const& last
+        source_input const& source
       , std::vector< ki::ast::statement >& statements
     );
 

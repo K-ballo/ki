@@ -14,9 +14,11 @@
 
 #include "ast.hpp"
 #include "scope.hpp"
+#include "source_input.hpp"
 
 #include <map>
 #include <string>
+#include <vector>
 
 namespace ki {
 
@@ -35,13 +37,26 @@ namespace ki {
         {
             _types.insert( id, type );
         }
-        void insert_object( ast::identifier const& id, ast::variable_declaration_ptr type )
+        void insert_object( ast::identifier const& id, ast::object_declaration_ptr type )
         {
             _objects.insert( id, type );
         }
         void insert_function( ast::identifier const& id, ast::function_declaration_ptr type )
         {
             _functions.insert( id, type );
+        }
+
+        std::pair< scope< ast::type_declaration_ptr >*, std::vector< ast::type_declaration_ptr > > lookup_type( ast::qualified_identifier const& id )
+        {
+            return _types.lookup_symbol( id );
+        }
+        std::pair< scope< ast::object_declaration_ptr >*, std::vector< ast::object_declaration_ptr > > lookup_object( ast::qualified_identifier const& id )
+        {
+            return _objects.lookup_symbol( id );
+        }
+        std::pair< scope< ast::function_declaration_ptr >*, std::vector< ast::function_declaration_ptr > > lookup_function( ast::qualified_identifier const& id )
+        {
+            return _functions.lookup_symbol( id );
         }
 
         declaration_map& nest( std::string const& name, scope_kind kind )
@@ -61,15 +76,28 @@ namespace ki {
             return iter->second;
         }
 
+        declaration_map& lookup_scope( std::string const& name )
+        {
+            typedef std::map< std::string, declaration_map > declaration_map_type;
+
+            declaration_map_type::iterator iter = _nested.find( name );
+            BOOST_ASSERT(( iter != _nested.end() ));
+            return iter->second;
+        }
+
     private:
         scope< ast::type_declaration_ptr > _types;
-        scope< ast::variable_declaration_ptr > _objects;
+        scope< ast::object_declaration_ptr > _objects;
         scope< ast::function_declaration_ptr > _functions;
         
         std::map< std::string, declaration_map > _nested;
     };
 
-    void declaration_phase( std::vector< ast::statement >& statements, declaration_map* output );
+    void declaration_phase(
+        source_input const& source
+      , std::vector< ast::statement >& statements
+      , declaration_map* output
+    );
 
 } // namespace ki
 
