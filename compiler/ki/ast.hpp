@@ -133,13 +133,14 @@ namespace ki { namespace ast {
     struct type_name : node
     {
         qualified_identifier type;
+        std::vector< type_name > template_arguments;
 
         type_declaration_ptr _declaration;
     };
     inline std::ostream& operator <<( std::ostream& left, type_name const& right )
     {
         return
-            left << right.type;
+            left << right.type << '<' << right.template_arguments << '>';
     }
     
     struct qualifier : node
@@ -494,12 +495,13 @@ namespace ki { namespace ast {
     struct function_call_expression : node
     {
         expression function;
+        std::vector< type_name > template_arguments;
         std::vector< expression > arguments;
     };
     inline std::ostream& operator <<( std::ostream& left, function_call_expression const& right )
     {
         return
-            left << right.function << '(' << right.arguments << ')';
+            left << right.function << '<' << right.template_arguments << '>' << '(' << right.arguments << ')';
     }
     
     struct intermediate_unary_expression : node
@@ -673,6 +675,7 @@ BOOST_FUSION_ADAPT_STRUCT(
 BOOST_FUSION_ADAPT_STRUCT(
     ki::ast::type_name
   , (ki::ast::qualified_identifier, type)
+    (std::vector< ki::ast::type_name >, template_arguments)
 )
 
 BOOST_FUSION_ADAPT_STRUCT(
@@ -718,6 +721,7 @@ BOOST_FUSION_ADAPT_STRUCT(
 BOOST_FUSION_ADAPT_STRUCT(
     ki::ast::function_call_expression
   , (ki::ast::expression, function)
+    (std::vector< ki::ast::type_name >, template_arguments)
     (std::vector< ki::ast::expression >, arguments)
 )
 

@@ -51,6 +51,8 @@ namespace ki {
         qi::rule< iterator, ast::type_name() > type_name;
         qi::rule< iterator, ast::qualifier() > qualifier;
         
+        qi::rule< iterator, std::vector< ast::type_name >() > template_arguments_list;
+        
         void build_expression_rules( lexer const& lexer );
         qi::rule< iterator, ast::expression() > expression;
 

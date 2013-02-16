@@ -52,6 +52,7 @@ namespace ki {
         type_name =
             ast_annotated[
                 qualified_identifier
+              > template_arguments_list
             ]
             ;
         BOOST_SPIRIT_DEBUG_NODES((type_name));
@@ -62,7 +63,13 @@ namespace ki {
             ]
             ;
         BOOST_SPIRIT_DEBUG_NODES((qualifier));
-            
+
+        template_arguments_list =
+            ast_annotated[
+                -( lexer( "<" ) > -( type_name % lexer( "," ) ) > lexer( ">" ) )
+            ]
+            ;
+        BOOST_SPIRIT_DEBUG_NODES((template_arguments_list));
     }
 
 } // namespace ki
