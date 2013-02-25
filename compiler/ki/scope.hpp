@@ -107,11 +107,10 @@ namespace ki {
             {
                 symbol_map_type::const_iterator lower =
                     scope_iter->_symbols.lower_bound( symbol.name );
-                if( lower != scope_iter->_symbols.end() )
+                symbol_map_type::const_iterator upper =
+                    scope_iter->_symbols.upper_bound( symbol.name );
+                if( lower != upper )
                 {
-                    symbol_map_type::const_iterator upper =
-                        scope_iter->_symbols.upper_bound( symbol.name );
-
                     for( lower; lower != upper; ++lower )
                     {
                         symbols.push_back( lower->second );
@@ -121,7 +120,7 @@ namespace ki {
                 }
             }
 
-            return std::make_pair( scope_iter, symbols );
+            return std::make_pair( static_cast< scope* >( 0 ), symbols );
         }
 
         void nest( scope* nested_scope )
