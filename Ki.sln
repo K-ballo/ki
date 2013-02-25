@@ -5,6 +5,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "empty", "empty\empty.vcxpro
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "compiler", "compiler\compiler.vcxproj", "{09303364-6BBB-4CEA-8134-567AF022FF87}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "wind", "wind\wind.vcxproj", "{760C5A27-A9FB-4270-B12A-7B80D1857D25}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug with Precedence and Associativity in Grammar|Win32 = Debug with Precedence and Associativity in Grammar|Win32
@@ -24,6 +26,12 @@ Global
 		{09303364-6BBB-4CEA-8134-567AF022FF87}.Debug|Win32.Build.0 = Debug|Win32
 		{09303364-6BBB-4CEA-8134-567AF022FF87}.Release|Win32.ActiveCfg = Release|Win32
 		{09303364-6BBB-4CEA-8134-567AF022FF87}.Release|Win32.Build.0 = Release|Win32
+		{760C5A27-A9FB-4270-B12A-7B80D1857D25}.Debug with Precedence and Associativity in Grammar|Win32.ActiveCfg = Debug|Win32
+		{760C5A27-A9FB-4270-B12A-7B80D1857D25}.Debug with Precedence and Associativity in Grammar|Win32.Build.0 = Debug|Win32
+		{760C5A27-A9FB-4270-B12A-7B80D1857D25}.Debug|Win32.ActiveCfg = Debug|Win32
+		{760C5A27-A9FB-4270-B12A-7B80D1857D25}.Debug|Win32.Build.0 = Debug|Win32
+		{760C5A27-A9FB-4270-B12A-7B80D1857D25}.Release|Win32.ActiveCfg = Release|Win32
+		{760C5A27-A9FB-4270-B12A-7B80D1857D25}.Release|Win32.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
